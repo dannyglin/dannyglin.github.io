@@ -4,7 +4,7 @@ import React from 'react'
 import NavBar from '../components/NavBar';
 import { ArtContainer, SiteContainer, GlobalStyle, FlexContainerCol, FlexContainerRow, ArtGlassCard } from '../components/styles'
 
-export default function VideoEditing() {
+export default function Photoshots() {
   return (
     <>
       <NavBar />
@@ -12,11 +12,11 @@ export default function VideoEditing() {
         <GlobalStyle/>
         <ArtContainer>
           <FlexContainerCol>
-            <div><h1>video editing</h1></div>
+            <div><h1>photoshots</h1></div>
             <FlexContainerRow>
               <ArtGlassCard>
                 <h2>Work in Progress</h2>
-                <p>Video editing portfolio coming soon...</p>
+                <p>Photography portfolio coming soon...</p>
               </ArtGlassCard>
             </FlexContainerRow>
           </FlexContainerCol>

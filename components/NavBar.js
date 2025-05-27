@@ -8,9 +8,9 @@ export default function NavBar() {
         <Link href="/about">about</Link>
         <Link href="/school">school</Link>
         <Link href="/projects">projects</Link>
-        <Link href="/resume">resume</Link>
+        <Link href="/photoshots">photoshots</Link>
         <Link href="/graphic-designs">graphic designs</Link>
-        <Link href="/video-editing">video editing</Link>
+        <Link href="/resume">resume</Link>
     </Navbar>
   )
 }
