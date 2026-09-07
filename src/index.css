@@ -4,11 +4,11 @@
    Theme tokens
    --------------------------------------------------------------------------- */
 :root {
-  --bg-0: #05060f;
-  --bg-1: #0b1026;
-  --ink: #f5f7ff;
-  --ink-dim: #b9c0e0;
-  --ink-faint: #7f88b4;
+  --bg-0: #0a1120; /* deep navy */
+  --bg-1: #121d33; /* dark slate blue */
+  --ink: #eef2fb;
+  --ink-dim: #b3bdd6;
+  --ink-faint: #7c88a8;
   --line: rgba(255, 255, 255, 0.14);
   --glass-tint: rgba(255, 255, 255, 0.08);
 }
@@ -42,7 +42,9 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Animated background - gives the liquid glass something to refract
+   Background - a calm pastel dark-blue field. Kept gently uneven (two soft
+   glows + a slow drift) so the glass still has something to refract, but no
+   multi-hue gradients or grid overlay.
    --------------------------------------------------------------------------- */
 .bg-stage {
   position: fixed;
@@ -50,70 +52,53 @@ body {
   z-index: -1;
   overflow: hidden;
   background:
-    radial-gradient(1200px 800px at 15% 10%, #1b2a6b 0%, transparent 60%),
-    radial-gradient(1000px 700px at 85% 20%, #6a1b9a 0%, transparent 55%),
-    radial-gradient(1100px 900px at 70% 90%, #0b6e6e 0%, transparent 55%),
-    linear-gradient(180deg, var(--bg-1), var(--bg-0));
+    radial-gradient(
+      1100px 780px at 22% 8%,
+      rgba(150, 178, 224, 0.16) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      1000px 820px at 82% 88%,
+      rgba(110, 138, 190, 0.14) 0%,
+      transparent 60%
+    ),
+    linear-gradient(178deg, var(--bg-1) 0%, var(--bg-0) 70%);
 }
 
 .bg-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.55;
+  filter: blur(90px);
+  opacity: 0.22;
   will-change: transform;
 }
 
 .bg-blob.a {
-  width: 46vw;
-  height: 46vw;
-  left: -8vw;
-  top: -6vw;
-  background: radial-gradient(circle at 30% 30%, #4f8cff, #1e3a8a 70%);
-  animation: drift-a 26s ease-in-out infinite alternate;
+  width: 44vw;
+  height: 44vw;
+  left: -6vw;
+  top: -8vw;
+  background: radial-gradient(circle at 35% 35%, #93a9d6, #33456f 72%);
+  animation: drift-a 48s ease-in-out infinite alternate;
 }
 
 .bg-blob.b {
   width: 40vw;
   height: 40vw;
-  right: -6vw;
-  top: 8vh;
-  background: radial-gradient(circle at 60% 40%, #c084fc, #7c3aed 70%);
-  animation: drift-b 32s ease-in-out infinite alternate;
-}
-
-.bg-blob.c {
-  width: 44vw;
-  height: 44vw;
-  left: 30vw;
-  bottom: -18vw;
-  background: radial-gradient(circle at 50% 50%, #2dd4bf, #0f766e 70%);
-  animation: drift-c 29s ease-in-out infinite alternate;
-}
-
-.bg-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 75%);
+  right: -8vw;
+  bottom: -10vw;
+  background: radial-gradient(circle at 55% 45%, #7d97c6, #2b3a5c 72%);
+  animation: drift-b 60s ease-in-out infinite alternate;
 }
 
 @keyframes drift-a {
   to {
-    transform: translate3d(12vw, 10vh, 0) scale(1.15);
+    transform: translate3d(5vw, 4vh, 0) scale(1.06);
   }
 }
 @keyframes drift-b {
   to {
-    transform: translate3d(-14vw, 12vh, 0) scale(1.2);
-  }
-}
-@keyframes drift-c {
-  to {
-    transform: translate3d(8vw, -12vh, 0) scale(1.1);
+    transform: translate3d(-5vw, -3vh, 0) scale(1.08);
   }
 }
 
@@ -134,19 +119,39 @@ body {
 
 /* ---------------------------------------------------------------------------
    CSS glass - fallback / complement to <LiquidGlass> (which only fully
-   renders its displacement in Chromium). Used for large content panels.
+   renders its displacement in Chromium). Used for content panels and, in a
+   frostier variant (.glass-frost), for buttons.
+
+   How the frost works: `backdrop-filter: blur()` samples the pixels behind the
+   element and blurs them. Bigger radius = more abstracted background = more
+   "frosted". Apple's Liquid Glass runs controls (buttons, toggles) at a heavier
+   frost than large panels so the label stays readable, which is what
+   .glass-frost does here. `saturate()` keeps the blurred background from going
+   grey; the inset highlights + 1px gradient border read as the bevelled rim.
    --------------------------------------------------------------------------- */
 .glass {
   position: relative;
   background: var(--glass-tint);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
   border: 1px solid var(--line);
   border-radius: 28px;
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.25),
     inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Frostier treatment for small controls (buttons / pills). More blur, a touch
+   more tint so the label pops, a slightly brighter rim. */
+.glass-frost {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(36px) saturate(140%);
+  -webkit-backdrop-filter: blur(36px) saturate(140%);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass::after {

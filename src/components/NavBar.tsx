@@ -90,9 +90,9 @@ export default function NavBar({ active, onSelect }: Props) {
       <LiquidGlass
         cornerRadius={999}
         padding="6px"
-        blurAmount={0.09}
+        blurAmount={0.55}
         displacementScale={44}
-        saturation={150}
+        saturation={140}
         aberrationIntensity={2}
         elasticity={0.25}
         mode="standard"

@@ -4,7 +4,7 @@ import { profile } from '../lib/resume'
 import type { Tab } from '../lib/tabs'
 
 const highlights = [
-  'M.S. CS, University of Pennsylvania',
+  'M.S. Computer Science, University of Pennsylvania',
   'B.S. Applied Mathematics + Business Management',
 ]
 

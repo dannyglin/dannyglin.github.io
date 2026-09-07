@@ -23,8 +23,8 @@ export default function GlassButton({
   newTab,
 }: Props) {
   const cls =
-    'glass glass-hover inline-flex items-center gap-2 rounded-full px-5 py-2.5 ' +
-    'text-sm font-semibold text-white no-underline cursor-pointer select-none'
+    'glass glass-frost glass-hover inline-flex items-center gap-2 rounded-full ' +
+    'px-5 py-2.5 text-sm font-semibold text-white no-underline cursor-pointer select-none'
 
   if (href) {
     return (

@@ -106,7 +106,14 @@ compensate for the component's built-in `translateY(-50%)`.
 Everything else (cards, buttons, footer, hero panel) uses the **`.glass` CSS
 system** in `index.css`: `backdrop-filter: blur() saturate()`, a 1px gradient
 border via `::after` mask, layered inset highlights. This looks consistent in all
-browsers and is cheap to repeat. `GlassPanel` and `GlassButton` wrap it.
+browsers and is cheap to repeat. `GlassPanel` wraps `.glass`; `GlassButton` adds
+`.glass-frost` (heavier blur + a bit more tint) so small controls read frostier
+than large panels, the way Apple's Liquid Glass runs its controls.
+
+Blur radii (raise these together if the frost ever needs tuning):
+`.glass` panels ~22px · `.glass-frost` buttons ~36px · nav `<LiquidGlass>`
+`blurAmount={0.55}` which the library turns into `4 + 0.55*32 ≈ 21px` of
+`backdrop-filter` blur, on top of its Chromium-only SVG displacement/refraction.
 
 If you want more "real" glass on a surface, it must become a fixed/absolute
 floating element first, or the layout breaks.
@@ -169,10 +176,14 @@ resume, not the personal one). Phone is in the PDF only.
 
 ## Design tokens (`src/index.css` `:root`)
 
-`--bg-0/-1` page background, `--ink / --ink-dim / --ink-faint` text ramp,
-`--line` hairline border, `--glass-tint` glass fill. Background = 3 animated
-`.bg-blob`s (blue / purple / teal) + faint masked grid. Respects
-`prefers-reduced-motion`.
+`--bg-0/-1` page background (deep navy -> dark slate blue), `--ink / --ink-dim /
+--ink-faint` text ramp, `--line` hairline border, `--glass-tint` glass fill.
+
+Background (`Background.tsx` + `.bg-stage` / `.bg-blob` in `index.css`) is a calm
+pastel dark-blue field: a soft top-to-bottom navy gradient + two low-opacity
+blue-family glows on a very slow (48-60s), small drift. No multi-hue gradients,
+no grid overlay - deliberately understated. Still just uneven enough for the
+glass to refract. Respects `prefers-reduced-motion`.
 
 ## Known limitations / TODO ideas
 
