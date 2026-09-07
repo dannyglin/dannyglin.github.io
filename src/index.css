@@ -1,0 +1,231 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Theme tokens
+   --------------------------------------------------------------------------- */
+:root {
+  --bg-0: #05060f;
+  --bg-1: #0b1026;
+  --ink: #f5f7ff;
+  --ink-dim: #b9c0e0;
+  --ink-faint: #7f88b4;
+  --line: rgba(255, 255, 255, 0.14);
+  --glass-tint: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-0);
+  color: var(--ink);
+  font-family:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  isolation: isolate;
+  max-width: 100vw;
+  overflow-x: clip;
+}
+
+/* ---------------------------------------------------------------------------
+   Animated background - gives the liquid glass something to refract
+   --------------------------------------------------------------------------- */
+.bg-stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(1200px 800px at 15% 10%, #1b2a6b 0%, transparent 60%),
+    radial-gradient(1000px 700px at 85% 20%, #6a1b9a 0%, transparent 55%),
+    radial-gradient(1100px 900px at 70% 90%, #0b6e6e 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-0));
+}
+
+.bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.bg-blob.a {
+  width: 46vw;
+  height: 46vw;
+  left: -8vw;
+  top: -6vw;
+  background: radial-gradient(circle at 30% 30%, #4f8cff, #1e3a8a 70%);
+  animation: drift-a 26s ease-in-out infinite alternate;
+}
+
+.bg-blob.b {
+  width: 40vw;
+  height: 40vw;
+  right: -6vw;
+  top: 8vh;
+  background: radial-gradient(circle at 60% 40%, #c084fc, #7c3aed 70%);
+  animation: drift-b 32s ease-in-out infinite alternate;
+}
+
+.bg-blob.c {
+  width: 44vw;
+  height: 44vw;
+  left: 30vw;
+  bottom: -18vw;
+  background: radial-gradient(circle at 50% 50%, #2dd4bf, #0f766e 70%);
+  animation: drift-c 29s ease-in-out infinite alternate;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 75%);
+}
+
+@keyframes drift-a {
+  to {
+    transform: translate3d(12vw, 10vh, 0) scale(1.15);
+  }
+}
+@keyframes drift-b {
+  to {
+    transform: translate3d(-14vw, 12vh, 0) scale(1.2);
+  }
+}
+@keyframes drift-c {
+  to {
+    transform: translate3d(8vw, -12vh, 0) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-blob {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .tab-enter {
+    animation: none;
+  }
+  .nav-indicator {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   CSS glass - fallback / complement to <LiquidGlass> (which only fully
+   renders its displacement in Chromium). Used for large content panels.
+   --------------------------------------------------------------------------- */
+.glass {
+  position: relative;
+  background: var(--glass-tint);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0) 70%,
+    rgba(255, 255, 255, 0.2)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glass-hover {
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease;
+}
+.glass-hover:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Chip / small pill */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Tab change: the incoming section slides in from the side it "came from".
+   `--enter-x` is set per render in App.tsx (+ve = moving forward). */
+.tab-enter {
+  animation: tab-enter 0.44s cubic-bezier(0.32, 0.72, 0, 1) both;
+  will-change: transform, opacity;
+}
+@keyframes tab-enter {
+  from {
+    opacity: 0;
+    transform: translateX(var(--enter-x, 24px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Sliding highlight behind the active nav tab. Position + size are set
+   inline from the target button's box; this just eases the change. */
+.nav-indicator {
+  transition:
+    transform 0.36s cubic-bezier(0.32, 0.72, 0, 1),
+    width 0.36s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(147, 197, 253, 0.35);
+}
