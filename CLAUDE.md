@@ -6,7 +6,7 @@ Context for future Claude Code sessions. Read this first.
 
 Personal portfolio for **Danny Lin** (Software Engineer) with an Apple-style
 **"liquid glass"** aesthetic. Single-page app, tabbed navigation, dark theme with
-an animated gradient field behind frosted-glass surfaces.
+a full-bleed photo behind frosted-glass surfaces.
 
 ## Stack
 
@@ -35,12 +35,12 @@ public/
   Danny_Lin_Resume.pdf     # copied from ~/Downloads on 2026-09-07; source of all resume content
 src/
   App.tsx                  # shell: <Background>, <NavBar>, tab switch, <FloatingContact>. #hash sync + swipe-to-switch.
-  index.css                # theme tokens, animated background, .glass system, animations
+  index.css                # theme tokens, .bg-stage photo+scrim, .glass system, animations
   lib/
     tabs.ts                # TABS tuple + labels + isTab() guard. Add/rename tabs here.
     resume.ts              # ALL portfolio content (profile, education, experience, projects, skills, photos)
   components/
-    Background.tsx          # fixed animated gradient blobs + grid. Pure CSS (classes in index.css).
+    Background.tsx          # renders .bg-stage: the fixed full-bleed photo + navy scrim (see index.css).
     NavBar.tsx              # the ONLY <LiquidGlass> instance (see note below)
     GlassPanel.tsx          # CSS frosted-glass <div> wrapper (.glass). Used for every content card.
     GlassButton.tsx         # CSS frosted-glass pill button/link
@@ -62,9 +62,11 @@ Three ways to change tab:
    the highlight follows the pointer (`hoverTab`) and the tab under release is
    selected. `NavBar.tsx`, via `document.elementFromPoint` + `[data-tab]`. If the
    strip overflows its max width it also scrolls under the drag.
-3. **Swipe/drag the content area** left/right to move to the prev/next tab in
-   `TABS` order (`App.tsx`, `SWIPE_DIST` / `SWIPE_RATIO`; trailing click
-   swallowed via `justSwiped`).
+3. **Swipe the content area** left/right to move to the prev/next tab in `TABS`
+   order (`App.tsx`, `SWIPE_DIST` / `SWIPE_RATIO`). **Touch/pen only** - the
+   handler ignores `pointerType === 'mouse'`, because on a mouse a horizontal
+   drag is text selection and hijacking it to change tabs is infuriating (this
+   bit us twice). A non-empty `getSelection()` also aborts it as a backstop.
 
 ### Tab-change motion
 
@@ -151,9 +153,9 @@ Some fields are user-provided, not from the PDF:
 - `profile.location` = "New York City, New York" (the resume PDF still says
   Middletown, NJ; `experience[].location` also still says Middletown, NJ - those
   are the job locations and were left as-is).
-- `profile.tagline` = "agentic workflow, llms, and data" (hero subtitle, lowercase on purpose).
 - `profile.blurb` = "Software Engineer working large scale of data, agent
-  workflows, and creative solutions." (shown on Home + About).
+  workflows, and creative solutions." (shown on Home + About). The hero shows
+  only name / title / location now - no tagline line.
 - `hobbies[]` - Basketball, Hiking, Running, Startups, Stock investing, Real
   estate, Game development. Shown on About under "Off the clock".
 
@@ -176,14 +178,24 @@ resume, not the personal one). Phone is in the PDF only.
 
 ## Design tokens (`src/index.css` `:root`)
 
-`--bg-0/-1` page background (deep navy -> dark slate blue), `--ink / --ink-dim /
---ink-faint` text ramp, `--line` hairline border, `--glass-tint` glass fill.
+`--bg-0/-1` fallback background colors (deep navy -> dark slate blue),
+`--ink / --ink-dim / --ink-faint` text ramp, `--line` hairline border,
+`--glass-tint` glass fill.
 
-Background (`Background.tsx` + `.bg-stage` / `.bg-blob` in `index.css`) is a calm
-pastel dark-blue field: a soft top-to-bottom navy gradient + two low-opacity
-blue-family glows on a very slow (48-60s), small drift. No multi-hue gradients,
-no grid overlay - deliberately understated. Still just uneven enough for the
-glass to refract. Respects `prefers-reduced-motion`.
+Background is a **full-bleed photo**: `public/website-background.jpg` (currently a
+cloud-wrapped mountain peak), set on `.bg-stage` (`position: fixed; inset: 0`) via
+`background-image` with `background-size: cover`. A navy `linear-gradient` scrim
+is layered on top - darker at the top/bottom (behind the nav pill and the
+`FloatingContact` pills), lighter (~0.66) through the middle so the photo reads.
+The scrim stops are tuned per photo; this one's top is bright sky so the top stop
+is ~0.86.
+`--bg-0` is the fallback if the image 404s. The glass panels blur/refract this
+photo, which is what makes the liquid-glass effect land. Headings that sit
+directly on the photo (Home hero, `SectionShell` eyebrow + title) carry a
+`.text-on-photo` shadow for legibility. To swap the photo: replace the file in
+`public/` (keep the name) or update the `url()` in `.bg-stage`.
+
+Image weight: ~1.1 MB JPEG, unoptimized - fine for now; compress if it matters.
 
 ## Known limitations / TODO ideas
 

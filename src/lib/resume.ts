@@ -7,7 +7,6 @@
 export const profile = {
   name: 'Danny Lin',
   title: 'Software Engineer',
-  tagline: 'agentic workflow, llms, and data',
   blurb:
     'Software Engineer working large scale of data, agent workflows, and creative solutions.',
   location: 'New York City, New York',

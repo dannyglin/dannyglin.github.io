@@ -55,19 +55,24 @@ export default function App() {
     if (next) go(next)
   }
 
-  // --- swipe / click-drag between tabs -------------------------------------
+  // --- swipe between tabs (touch only) -----------------------------------
+  // Deliberately touch/pen only: on a mouse, a horizontal drag is how you
+  // select text to copy, and hijacking that to change tabs is maddening.
+  // Desktop users switch tabs by clicking or dragging across the nav pill.
   const gesture = useRef({ x: 0, y: 0, t: 0, active: false })
-  const justSwiped = useRef(false)
 
   const onPointerDown = (e: React.PointerEvent) => {
-    if (e.pointerType === 'mouse' && e.button !== 0) return
+    if (e.pointerType === 'mouse') return
     gesture.current = { x: e.clientX, y: e.clientY, t: Date.now(), active: true }
   }
 
   const onPointerUp = (e: React.PointerEvent) => {
     const g = gesture.current
-    if (!g.active) return
+    if (!g.active || e.pointerType === 'mouse') return
     g.active = false
+
+    // A real text selection (even on touch) means the user was highlighting.
+    if (window.getSelection?.()?.toString().trim()) return
 
     const dx = e.clientX - g.x
     const dy = e.clientY - g.y
@@ -75,21 +80,8 @@ export default function App() {
     // Must be a clear, mostly-horizontal drag.
     if (Math.abs(dx) < SWIPE_DIST || Math.abs(dx) < Math.abs(dy) * SWIPE_RATIO)
       return
-    // The drag may have selected text on the way; clear it and navigate.
-    window.getSelection?.()?.removeAllRanges()
 
-    justSwiped.current = true
-    window.setTimeout(() => (justSwiped.current = false), 350)
     goByOffset(dx < 0 ? 1 : -1)
-  }
-
-  // Swallow the click that trails a drag so a link/button under the cursor
-  // isn't also activated.
-  const onClickCapture = (e: React.MouseEvent) => {
-    if (justSwiped.current) {
-      e.preventDefault()
-      e.stopPropagation()
-    }
   }
 
   const sections: Record<Tab, ReactNode> = {
@@ -110,7 +102,6 @@ export default function App() {
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         onPointerCancel={() => (gesture.current.active = false)}
-        onClickCapture={onClickCapture}
         style={{ touchAction: 'pan-y pinch-zoom' }}
       >
         <main>

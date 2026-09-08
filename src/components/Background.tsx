@@ -1,10 +1,5 @@
-/** Fixed pastel dark-blue field behind everything. Two soft, slow glows keep
- *  it gently uneven so the glass surfaces have something to refract. */
+/** Fixed full-bleed photo behind everything, with a navy scrim for legibility
+ *  (see `.bg-stage` in index.css). The glass surfaces blur / refract it. */
 export default function Background() {
-  return (
-    <div className="bg-stage" aria-hidden="true">
-      <div className="bg-blob a" />
-      <div className="bg-blob b" />
-    </div>
-  )
+  return <div className="bg-stage" aria-hidden="true" />
 }
