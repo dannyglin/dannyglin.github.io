@@ -4,7 +4,11 @@ import { photos } from '../lib/resume'
 
 export default function Photography() {
   return (
-    <SectionShell eyebrow="Photography" title="Through the lens">
+    <SectionShell
+      eyebrow="Photography"
+      title="Through the lens"
+      note="Work in progress"
+    >
       <p className="mb-8 max-w-2xl text-[var(--ink-dim)]">
         A rotating set of frames from around the Northeast. Drop real images into{' '}
         <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm">

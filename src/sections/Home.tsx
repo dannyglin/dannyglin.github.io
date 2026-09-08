@@ -1,5 +1,6 @@
 import GlassButton from '../components/GlassButton'
 import GlassPanel from '../components/GlassPanel'
+import TrainerCluster from '../components/TrainerCluster'
 import { profile } from '../lib/resume'
 import type { Tab } from '../lib/tabs'
 
@@ -10,7 +11,7 @@ const highlights = [
 
 export default function Home({ onNavigate }: { onNavigate: (t: Tab) => void }) {
   return (
-    <section className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-4 pb-32 pt-32 sm:px-6">
+    <section className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-4 pb-32 pt-32 sm:px-6">
       <h1 className="text-on-photo text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-7xl">
         {profile.name}
       </h1>
@@ -21,18 +22,27 @@ export default function Home({ onNavigate }: { onNavigate: (t: Tab) => void }) {
         {profile.location}
       </p>
 
-      <GlassPanel className="mt-10 max-w-2xl p-6 sm:p-8">
-        <p className="text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg">
-          {profile.blurb}
-        </p>
-        <div className="mt-6 flex flex-wrap gap-2">
-          {highlights.map((h) => (
-            <span key={h} className="chip">
-              {h}
-            </span>
-          ))}
-        </div>
-      </GlassPanel>
+      <div className="blurb-wrap mt-10 max-w-2xl">
+        <GlassPanel className="p-6 sm:p-8">
+          <p className="text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg">
+            {profile.blurb} Off the clock, that usually means a basketball court, a
+            trail run, or a half-built game project.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {highlights.map((h) => (
+              <span key={h} className="chip">
+                {h}
+              </span>
+            ))}
+          </div>
+        </GlassPanel>
+        <img
+          src="/sprites/male_running.png"
+          alt=""
+          aria-hidden="true"
+          className="pixel-sprite blurb-runner"
+        />
+      </div>
 
       <div className="mt-10 flex flex-wrap items-center gap-4">
         <GlassButton onClick={() => onNavigate('resume')}>
@@ -46,6 +56,8 @@ export default function Home({ onNavigate }: { onNavigate: (t: Tab) => void }) {
           LinkedIn
         </GlassButton>
       </div>
+
+      <TrainerCluster />
     </section>
   )
 }

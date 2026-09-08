@@ -1,6 +1,6 @@
 import GlassPanel from '../components/GlassPanel'
 import SectionShell from '../components/SectionShell'
-import { experience, hobbies, profile, skills } from '../lib/resume'
+import { experience, hobbies, skills } from '../lib/resume'
 
 export default function About() {
   const current = experience[0]
@@ -10,19 +10,23 @@ export default function About() {
       <div className="grid gap-6 lg:grid-cols-5">
         <GlassPanel className="p-6 sm:p-8 lg:col-span-3">
           <p className="text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg">
-            {profile.blurb}
+            Hi, I&apos;m Danny.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[var(--ink-dim)]">
-            I finished an M.S. in Computer Science at the University of
-            Pennsylvania in December 2025, after a B.S. in Applied Mathematics
-            &amp; Statistics and Business Management at Stony Brook University
-            (Magna Cum Laude). Since then I&apos;ve been at AT&amp;T, moving from
-            the Network CTO into the Cyber Security Office.
+            I&apos;m a software engineer at AT&amp;T working on 100 billion rows
+            of data - cleaning, parsing, and transforming them into a story.
+            I&apos;ve worked on full-stack development, RAG pipelines, and
+            time-series machine learning concepts across the Cyber Security
+            Office, Network Chief Technology Office, and Optical Network team.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[var(--ink-dim)]">
-            My work runs from PySpark pipelines over hundreds of billions of log
-            rows on Databricks, to LLM evaluation pipelines and RAG systems, to
-            the internal React / Azure / PostgreSQL apps analysts use every day.
+            I earned my M.S. in Computer Science from the University of
+            Pennsylvania after studying Applied Mathematics, Statistics, and
+            Business at Stony Brook University.
+          </p>
+          <p className="mt-4 text-base leading-relaxed text-[var(--ink-dim)]">
+            Outside of work, I love running, basketball, stock investing, real
+            estate, trying new restaurants + cafes and iOS and game development.
           </p>
         </GlassPanel>
 

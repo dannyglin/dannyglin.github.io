@@ -4,11 +4,11 @@
    Theme tokens
    --------------------------------------------------------------------------- */
 :root {
-  --bg-0: #0a1120; /* deep navy */
-  --bg-1: #121d33; /* dark slate blue */
+  --bg-0: #001f3f; /* deep navy - the "water" theme base */
+  --bg-1: #06294a;
   --ink: #eef2fb;
   --ink-dim: #b3bdd6;
-  --ink-faint: #7c88a8;
+  --ink-faint: #8fa6c4;
   --line: rgba(255, 255, 255, 0.14);
   --glass-tint: rgba(255, 255, 255, 0.1);
 }
@@ -42,33 +42,176 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Background - a full-bleed photo, pinned to the viewport, with a navy scrim
-   over it (darker at top/bottom behind the nav and floating pills, lighter in
-   the middle so the photo reads). The glass surfaces blur/refract this.
+   Background - animated "water" gradient, ported from ximluo.github.io.
+   Five radial-gradient blobs drift on slow loops and are fused by an SVG "goo"
+   filter over the deep-navy base; a `bi` blob tracks the cursor (see
+   Background.tsx). `::after` lays a faint grain over everything.
    --------------------------------------------------------------------------- */
 .bg-stage {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
-  background-color: var(--bg-0); /* shown if the image fails to load */
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(8, 13, 24, 0.86) 0%,
-      rgba(8, 13, 24, 0.66) 40%,
-      rgba(8, 13, 24, 0.72) 78%,
-      rgba(8, 13, 24, 0.9) 100%
-    ),
-    url('/website-background.jpg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  background-color: var(--bg-0);
+
+  --circle-size: 90%;
+  --c1: 173, 216, 230; /* light blue   */
+  --c2: 0, 116, 217; /* azure        */
+  --c3: 65, 105, 225; /* royal blue   */
+  --c4: 0, 31, 63; /* deep navy    */
+  --c5: 135, 206, 235; /* sky blue     */
+  --ci: 0, 191, 255; /* interactive  */
+}
+
+/* fine dot-matrix grain, painted from a canvas tile (see Background.tsx) */
+.bg-noise {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bg-goo-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.bg-blobs {
+  position: absolute;
+  inset: 0;
+  filter: url(#bg-goo) blur(40px) brightness(0.86);
+  /* keep this expensive filtered layer off the content's raster path */
+  will-change: transform;
+  transform: translateZ(0);
+  contain: paint;
+}
+
+.bg-blob {
+  position: absolute;
+  width: var(--circle-size);
+  height: var(--circle-size);
+  border-radius: 50%;
+  opacity: 0.3;
+}
+
+.bg-blob.b1 {
+  background: radial-gradient(
+      circle at center,
+      rgba(var(--c1), 0.6) 0%,
+      rgba(var(--c1), 0) 50%
+    )
+    no-repeat;
+  top: calc(90% - var(--circle-size) / 2);
+  left: calc(90% - var(--circle-size) / 2);
+  transform-origin: center;
+  animation: bg-move-vertical 30s ease infinite;
+}
+.bg-blob.b2 {
+  background: radial-gradient(
+      circle at center,
+      rgba(var(--c2), 0.6) 0%,
+      rgba(var(--c2), 0) 50%
+    )
+    no-repeat;
+  top: calc(50% - var(--circle-size) / 2);
+  left: calc(50% - var(--circle-size) / 2);
+  transform-origin: calc(50% - 400px);
+  animation: bg-move-circle 20s reverse infinite;
+}
+.bg-blob.b3 {
+  background: radial-gradient(
+      circle at center,
+      rgba(var(--c3), 0.6) 0%,
+      rgba(var(--c3), 0) 50%
+    )
+    no-repeat;
+  top: calc(50% - var(--circle-size) / 2 + 200px);
+  left: calc(50% - var(--circle-size) / 2 - 500px);
+  transform-origin: calc(50% + 400px);
+  animation: bg-move-circle 40s linear infinite;
+}
+.bg-blob.b4 {
+  background: radial-gradient(
+      circle at center,
+      rgba(var(--c4), 0.6) 0%,
+      rgba(var(--c4), 0) 50%
+    )
+    no-repeat;
+  top: calc(50% - var(--circle-size) / 2);
+  left: calc(50% - var(--circle-size) / 2);
+  transform-origin: calc(50% - 200px);
+  animation: bg-move-horizontal 40s ease infinite;
+}
+.bg-blob.b5 {
+  background: radial-gradient(
+      circle at center,
+      rgba(var(--c5), 0.6) 0%,
+      rgba(var(--c5), 0) 50%
+    )
+    no-repeat;
+  width: calc(var(--circle-size) * 2);
+  height: calc(var(--circle-size) * 2);
+  top: calc(50% - var(--circle-size));
+  left: calc(50% - var(--circle-size));
+  transform-origin: calc(50% - 800px) calc(50% + 200px);
+  animation: bg-move-circle 20s ease infinite;
+}
+.bg-blob.bi {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--ci), 0.5) 0%,
+    rgba(var(--ci), 0) 50%
+  );
+  width: 140%;
+  height: 140%;
+  top: -70%;
+  left: -70%;
+  opacity: 0.5;
+}
+
+@keyframes bg-move-circle {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes bg-move-vertical {
+  0% {
+    transform: translateY(-50%);
+  }
+  50% {
+    transform: translateY(50%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+@keyframes bg-move-horizontal {
+  0% {
+    transform: translateX(-50%) translateY(-10%);
+  }
+  50% {
+    transform: translateX(50%) translateY(10%);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-10%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .bg-blob {
+    animation: none !important;
   }
   .tab-enter {
     animation: none;
@@ -103,8 +246,10 @@ body {
     inset 0 -1px 0 rgba(255, 255, 255, 0.06);
 }
 
-/* Frostier treatment for small controls (buttons / pills). More blur, a touch
-   more tint so the label pops, a slightly brighter rim. */
+/* Frostier treatment for small controls (buttons / pills / the chat panel).
+   More blur, a touch more tint so the label pops, a slightly brighter rim.
+   Every button and the chat surfaces use this so the whole site reads like the
+   blurred nav pill. Pair with `.glass` (for the ::after rim). */
 .glass-frost {
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(36px) saturate(140%);
@@ -113,6 +258,52 @@ body {
     0 8px 30px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Text-field surface - frosted like the controls, with a focus ring. Pair with
+   `.glass`. */
+.glass-input {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition:
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.glass-input:focus-within {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 0 2px rgba(147, 197, 253, 0.4);
+}
+
+/* Small frosted control - icon buttons and compact actions (the chat send /
+   stop button, the panel header buttons). Same frosted material as the nav
+   pill and `.glass-frost`, with a lighter shadow than the big `.glass` panels
+   so it doesn't feel heavy at 32px. Pair with a `rounded-*` utility. */
+.glass-control {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    0 4px 14px rgba(0, 0, 0, 0.25);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+.glass-control:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.17);
+}
+.glass-control:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.glass-control:disabled {
+  opacity: 0.4;
 }
 
 .glass::after {
@@ -156,7 +347,9 @@ body {
     0 3px 22px rgba(0, 0, 0, 0.5);
 }
 
-/* Chip / small pill */
+/* Chip / small pill - frosted with the same blurred-glass material as the nav
+   pill so tags and the chat's example-prompt buttons read as the same surface
+   as everything else, just smaller. `button.chip` adds the interactive states. */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -165,10 +358,71 @@ body {
   border-radius: 999px;
   font-size: 0.8rem;
   color: var(--ink-dim);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid var(--line);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 4px 14px rgba(0, 0, 0, 0.22);
+}
+button.chip {
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+button.chip:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--ink);
+}
+button.chip:active {
+  transform: scale(0.97);
+}
+
+/* ---------------------------------------------------------------------------
+   Real refraction on the glass controls.
+
+   The rules above frost the backdrop (blur). This adds `url(#glass-warp)` - an
+   SVG `feDisplacementMap` (see `GlassFilter.tsx`) that actually *warps* the
+   pixels behind the element, the way the `<LiquidGlass>` nav pill does.
+
+   Guarded by `@supports (backdrop-filter: url(...))`: Chromium resolves an SVG
+   filter reference inside `backdrop-filter`, so it gets the displacement; other
+   engines fail the query and keep the plain `blur()` from the base rules. Blur
+   is dialed *down* in here so the warp is actually visible under it.
+   --------------------------------------------------------------------------- */
+@supports (backdrop-filter: url("#glass-warp")) {
+  /* Every content panel (GlassPanel: the hero blurb card, the About / School /
+     Projects / Photography / Resume cards). Softer, lower-frequency map than the
+     controls so large surfaces don't shimmer. Listed first so the more specific
+     control rules below still win for elements that also carry .glass. */
+  .glass {
+    backdrop-filter: blur(15px) saturate(145%) url(#glass-warp-panel);
+    -webkit-backdrop-filter: blur(15px) saturate(145%) url(#glass-warp-panel);
+  }
+  .glass-frost {
+    backdrop-filter: blur(16px) saturate(150%) url(#glass-warp);
+    -webkit-backdrop-filter: blur(16px) saturate(150%) url(#glass-warp);
+  }
+  .glass-control {
+    backdrop-filter: blur(13px) saturate(150%) url(#glass-warp);
+    -webkit-backdrop-filter: blur(13px) saturate(150%) url(#glass-warp);
+  }
+  .glass-input {
+    backdrop-filter: blur(13px) saturate(150%) url(#glass-warp);
+    -webkit-backdrop-filter: blur(13px) saturate(150%) url(#glass-warp);
+  }
+  .chip {
+    backdrop-filter: blur(11px) saturate(150%) url(#glass-warp);
+    -webkit-backdrop-filter: blur(11px) saturate(150%) url(#glass-warp);
+  }
+  /* the chat panel shell (.glass + .glass-frost) gets the softer panel map */
+  .glass-frost.glass-panel-warp {
+    backdrop-filter: blur(18px) saturate(150%) url(#glass-warp-panel);
+    -webkit-backdrop-filter: blur(18px) saturate(150%) url(#glass-warp-panel);
+  }
 }
 
 /* Tab change: the incoming section slides in from the side it "came from".
@@ -202,4 +456,97 @@ a {
 
 ::selection {
   background: rgba(147, 197, 253, 0.35);
+}
+
+/* ---------------------------------------------------------------------------
+   Home hero pixel-sprite easter-egg (public/sprites/, all `.pixel-sprite`).
+
+   - .blurb-runner: a small sprite that laps the bio panel forever via CSS
+     Motion Path, turning at each corner. `offset-path` is Chromium-ish;
+     engines without it just hide the runner (same "Chromium-only extra" story
+     as the glass refraction).
+   - .trainer-cluster: the owner's Pokemon team in a shallow "V" to the right
+     of the bio card (xl+ only; see src/components/TrainerCluster.tsx). Each
+     sprite's left/top/width/z-index are set inline from that component's data;
+     this file only places and animates the box.
+
+   All motion is disabled under prefers-reduced-motion.
+   --------------------------------------------------------------------------- */
+.pixel-sprite {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.blurb-wrap {
+  position: relative;
+}
+.blurb-runner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+  offset-path: inset(-30px round 26px);
+  offset-anchor: 50% 50%;
+  offset-rotate: auto;
+  animation: blurb-run 10s linear infinite;
+}
+@keyframes blurb-run {
+  to {
+    offset-distance: 100%;
+  }
+}
+@supports not (offset-path: inset(0px round 0px)) {
+  .blurb-runner {
+    display: none;
+  }
+}
+
+/* The box the sprites are positioned within - pinned to the right of the hero,
+   in the open space beside the bio card. */
+.trainer-cluster {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 460px;
+  height: 360px;
+  transform: translate(27%, -46%);
+  pointer-events: none;
+}
+.trainer-cluster__self,
+.trainer-cluster__mon {
+  position: absolute; /* left / top / width / z-index come from the component */
+  transform: translate(-50%, -50%);
+  animation: sprite-bob 3.1s ease-in-out infinite;
+}
+.trainer-cluster__self {
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.5));
+  animation-duration: 3.5s; /* the trainer bobs on his own rhythm */
+}
+.trainer-cluster__mon {
+  filter: drop-shadow(0 5px 9px rgba(0, 0, 0, 0.45));
+}
+@keyframes sprite-bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trainer-cluster__self,
+  .trainer-cluster__mon {
+    animation: none !important;
+  }
+  .blurb-runner {
+    display: none;
+  }
 }

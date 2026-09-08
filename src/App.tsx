@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Background from './components/Background'
+import ChatWidget from './components/ChatWidget'
 import FloatingContact from './components/FloatingContact'
+import GlassFilter from './components/GlassFilter'
 import NavBar from './components/NavBar'
 import { TABS, isTab, type Tab } from './lib/tabs'
 import About from './sections/About'
@@ -95,6 +97,7 @@ export default function App() {
 
   return (
     <>
+      <GlassFilter />
       <Background />
       <NavBar active={tab} onSelect={go} />
 
@@ -118,6 +121,7 @@ export default function App() {
       </div>
 
       <FloatingContact onHome={() => go('home')} />
+      <ChatWidget />
     </>
   )
 }

@@ -8,7 +8,7 @@ export const profile = {
   name: 'Danny Lin',
   title: 'Software Engineer',
   blurb:
-    'Software Engineer working large scale of data, agent workflows, and creative solutions.',
+    'Software Engineer working on large-scale data, agent workflows, and creative solutions.',
   location: 'New York City, New York',
   email: 'danny.lin.careers@gmail.com',
   phone: '850-490-7526',
@@ -19,14 +19,15 @@ export const profile = {
   resumePdf: '/Danny_Lin_Resume.pdf',
 }
 
-/** Personal interests - shown on the About tab. */
+/** Personal interests - shown on the About tab ("Off the clock" chips). Keep in
+ * sync with the "Outside of work" line in the About bio. */
 export const hobbies: string[] = [
-  'Basketball',
-  'Hiking',
   'Running',
-  'Startups',
+  'Basketball',
   'Stock investing',
   'Real estate',
+  'Restaurants + cafes',
+  'iOS development',
   'Game development',
 ]
 
@@ -78,9 +79,8 @@ export const experience: Job[] = [
     end: 'Present',
     points: [
       'Made 100B+ rows of firewall logs searchable for the first time by building a PySpark pipeline on Databricks that splits each raw log message into 70+ typed columns, unblocking an $850K threat-detection program.',
-      'Told analysts which business unit owns the machine behind an alert by matching 12B+ network traffic records against firewall address inventories, removing a manual step from every investigation.',
+      'Created a React web app that cut LLM spend 30% on a customer-facing support chatbot by building an evaluation pipeline that grades every conversation for answer quality and abuse risk, then feeds the worst offenders (bots, spammers, and so on) to an Akamai web application firewall block list.',
       'Cut 6 hours a week of raw log reading with SQL reports ranking top hostnames and most-triggered firewall rules.',
-      'Cut LLM spend 30% on a customer-facing support chatbot by building an evaluation pipeline that grades every conversation for answer quality and abuse risk, then feeds the worst offenders to an Akamai web application firewall block list.',
       'Built the internal React / Azure / PostgreSQL app where analysts read flagged chats and override the model on 2% of them.',
       'Shortened feature turnaround by running Claude Code and Copilot agents against a checked-in CLAUDE.md, custom slash commands, and pre-commit hooks, with MCP servers connecting the agents to internal data sources.',
     ],
@@ -107,7 +107,7 @@ export const experience: Job[] = [
     start: 'June 2024',
     end: 'Aug. 2024',
     points: [
-      'Cut documentation search time 85% for network engineers with a Streamlit tool over a Pinecone vector store.',
+      'Built a RAG web app in Streamlit over a Pinecone vector store that cut documentation search time 85% for network engineers.',
       'Reached 90% retrieval accuracy on real engineer questions by tuning chunking and retrieval in a GPT-4 RAG system.',
       'Indexed 1,000 PDF manuals into embeddings with a Python pipeline, cutting manual research effort 30%.',
     ],

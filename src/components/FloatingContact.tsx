@@ -17,7 +17,7 @@ export default function FloatingContact({ onHome }: { onHome: () => void }) {
           type="button"
           onClick={onHome}
           aria-label="Danny Lin - go to home"
-          className="glass glass-hover rounded-full px-4 py-2.5 text-sm font-semibold text-white"
+          className="glass glass-frost glass-hover rounded-full px-4 py-2.5 text-sm font-semibold text-white"
         >
           {profile.name}
         </button>
@@ -26,7 +26,7 @@ export default function FloatingContact({ onHome }: { onHome: () => void }) {
       <div className="fixed bottom-4 right-4 z-40 sm:bottom-6 sm:right-6">
         <nav
           aria-label="Social links"
-          className="glass flex items-center gap-0.5 rounded-full p-1.5"
+          className="glass glass-frost flex items-center gap-0.5 rounded-full p-1.5"
         >
           <IconLink href={profile.links.github} label="GitHub">
             <GitHubIcon />

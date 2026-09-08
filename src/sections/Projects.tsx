@@ -7,13 +7,17 @@ export default function Projects() {
   const workHighlights = experience
     .filter((j) => j.team)
     .map((j) => ({
-      name: `${j.team} · ${j.company}`,
+      name: `${j.company} · ${j.team}`,
       period: `${j.start} - ${j.end}`,
       point: j.points[0],
     }))
 
   return (
-    <SectionShell eyebrow="Projects" title="Things I've built">
+    <SectionShell
+      eyebrow="Projects"
+      title="Things I've built"
+      note="Work in progress"
+    >
       <div className="space-y-6">
         {projects.map((p) => (
           <GlassPanel key={p.name} className="p-6 sm:p-8" hover>
