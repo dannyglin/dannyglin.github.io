@@ -190,14 +190,24 @@ Pixel-art PNGs in `public/sprites/` (all carry `.pixel-sprite` -> `image-renderi
   engines without it - same "Chromium-only extra" story as the glass refraction.
 
 - **`TrainerCluster.tsx`** - the owner's Pokemon team in a shallow "V" to the
-  right of the bio card, `xl:` and up only (needs the width). Fully data-driven:
-  every sprite (trainer included) is `width(px) = heightM * SCALE` off canonical
-  Pokedex heights, so sizes are honest relative to each other. `TRAINER_HEIGHT_M`
-  is inflated so the trainer leads rather than being the shortest; Dialga carries
-  a fixed `px` override because its true scale (~420px) would blow out the box.
-  `x`/`y` are sprite centres within the `.trainer-cluster` box; `z-index` runs by
-  rendered size (smallest in front), trainer always on top. Retune knobs:
-  `SCALE` (whole family), `TRAINER_HEIGHT_M` (trainer vs team), `dialga.px`.
+  right of the bio card, `lg:` and up (needs the width). Between `lg` and `xl`
+  the hero column is only as wide as the viewport, so `index.css` scales the
+  `.trainer-cluster` box down (`scale(0.78)`) and pulls it in for that range;
+  `xl+` keeps the full-size placement. Fully data-driven: every sprite (trainer
+  included) is `width(px) = heightM * SCALE` off canonical Pokedex heights, so
+  sizes are honest relative to each other. `TRAINER_HEIGHT_M` is inflated so the
+  trainer leads rather than being the shortest; Dialga carries a fixed `px`
+  override because its true scale (~420px) would blow out the box. `x`/`y` are
+  sprite centres within the `.trainer-cluster` box; `z-index` runs by rendered
+  size (smallest in front), trainer always on top. Retune knobs: `SCALE` (whole
+  family), `TRAINER_HEIGHT_M` (trainer vs team), `dialga.px`, and the
+  lg-to-xl `scale()` in `index.css`.
+
+**Reduced motion:** the `@media (prefers-reduced-motion: reduce)` block does not
+switch the easter-egg off - it calms it: the bob height drops (`--bob` var:
+`-7px -> -3px`) and slows (`7s`), and `.blurb-runner` slows to a `32s` drift
+instead of `display: none`. (It is still fully hidden where `offset-path` is
+unsupported.)
 
 Sprites were re-encoded through `sips` to strip junk metadata (2.2 MB -> ~36 KB
 total); keep new sprites lean.
@@ -343,3 +353,12 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   Note: the live chat model is `SmolLM2-360M-Instruct-q4f16_1-MLC` (set in
   `engine.ts` with a comment on the tradeoff), not the Llama-3.2-1B named in the
   2026-09-08 entry above.
+- **2026-09-09 (edits 2)** - Sprite easter-egg reach + reduced motion. The
+  "gifs aren't moving" report was `prefers-reduced-motion` (the old block set
+  `animation: none` + `display: none`). Now it calms instead of kills: `--bob`
+  var drops the bob to `-3px` / `7s`, `.blurb-runner` slows to a `32s` drift.
+  Also lowered the team's gate from `xl:` to `lg:` (`TrainerCluster.tsx`) and
+  added a `1024-1279.98px` media query that scales `.trainer-cluster` to `0.78`
+  and pulls it in so it does not spill past the viewport in that range. Not yet
+  eyeballed on a real 1024-1280 screen - tune the `scale()` / `translate()` in
+  `index.css` if the wedge sits wrong there.

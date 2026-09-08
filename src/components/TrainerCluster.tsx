@@ -2,8 +2,10 @@
  * Decorative easter-egg for the Home hero: the owner's Pokemon team in a shallow
  * "V", packed like a family, sitting entirely to the right of the bio card.
  * Purely cosmetic - `aria-hidden`, `pointer-events: none`, and only rendered at
- * `xl` and up where there is room. Positioning lives in `.trainer-cluster*` in
- * `src/index.css`; motion is disabled there under `prefers-reduced-motion`.
+ * `lg` and up where there is room (`index.css` scales it down for the lg-to-xl
+ * range so it does not spill past the viewport). Positioning lives in
+ * `.trainer-cluster*` in `src/index.css`; under `prefers-reduced-motion` the
+ * motion there is calmed down, not switched off.
  *
  * Every sprite - the trainer included - is drawn to ONE scale, so sizes are
  * honest relative to each other: `width(px) = heightM * SCALE`, using canonical
@@ -77,7 +79,7 @@ function SpriteImg({
 
 export default function TrainerCluster() {
   return (
-    <div className="trainer-cluster hidden xl:block" aria-hidden="true">
+    <div className="trainer-cluster hidden lg:block" aria-hidden="true">
       {TEAM.map((sprite, i) => (
         <SpriteImg
           key={sprite.name}

@@ -518,10 +518,22 @@ a {
   transform: translate(27%, -46%);
   pointer-events: none;
 }
+/* The component renders the cluster from `lg` up. Between lg and xl the hero
+   column is only as wide as the viewport, so the box would spill past the right
+   edge (and get clipped by #root's `overflow-x: clip`). Scale it down and pull
+   it in for that range; xl+ keeps the full-size placement above. */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .trainer-cluster {
+    transform: translate(3%, -46%) scale(0.78);
+  }
+}
 .trainer-cluster__self,
 .trainer-cluster__mon {
   position: absolute; /* left / top / width / z-index come from the component */
   transform: translate(-50%, -50%);
+  /* Bob height is a variable so `prefers-reduced-motion` can shrink it (below)
+     rather than switch the animation off entirely. */
+  --bob: -7px;
   animation: sprite-bob 3.1s ease-in-out infinite;
 }
 .trainer-cluster__self {
@@ -537,16 +549,19 @@ a {
     translate: 0 0;
   }
   50% {
-    translate: 0 -7px;
+    translate: 0 var(--bob);
   }
 }
 
+/* Reduced motion: don't kill the easter-egg, just calm it right down - a small,
+   slow bob and a slow drift for the runner instead of stopping / hiding them. */
 @media (prefers-reduced-motion: reduce) {
   .trainer-cluster__self,
   .trainer-cluster__mon {
-    animation: none !important;
+    --bob: -3px;
+    animation-duration: 7s;
   }
   .blurb-runner {
-    display: none;
+    animation-duration: 32s;
   }
 }
