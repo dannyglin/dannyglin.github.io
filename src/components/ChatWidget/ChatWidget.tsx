@@ -58,6 +58,21 @@ export default function ChatWidget() {
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
+  // On phones the open panel is a near-full-height sheet over a scrim, so freeze
+  // the page behind it - otherwise the body scrolls under the sheet and the
+  // whole thing reads as "covering everything" instead of a dismissible modal.
+  // Desktop keeps its small floating card and stays scrollable.
+  useEffect(() => {
+    if (!open) return
+    const isPhone = window.matchMedia('(max-width: 639px)').matches
+    if (!isPhone) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
   async function handleLoad() {
     setStatus('loading')
     setError(null)
@@ -153,14 +168,28 @@ export default function ChatWidget() {
         </div>
       )}
 
+      {/* Phone-only scrim: dims the page and closes on tap so the sheet is
+          clearly dismissible. Hidden from >=sm, where the panel is a small
+          floating card that doesn't obscure the page. */}
+      {open && (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50 sm:hidden"
+        />
+      )}
+
       {open && (
         <div
           role="dialog"
+          aria-modal="true"
           aria-label="Ask about Danny"
-          className={`fixed bottom-4 left-1/2 z-40 flex w-[min(400px,calc(100vw-1.5rem))] -translate-x-1/2 flex-col sm:bottom-6 ${
+          className={`fixed inset-x-2 bottom-2 z-40 flex flex-col sm:inset-x-auto sm:bottom-6 sm:left-1/2 sm:w-[min(400px,calc(100vw-1.5rem))] sm:-translate-x-1/2 ${
             status === 'ready'
-              ? 'h-[min(70dvh,560px)]'
-              : 'max-h-[min(70dvh,560px)]'
+              ? 'h-[min(75dvh,560px)] sm:h-[min(70dvh,560px)]'
+              : 'max-h-[min(75dvh,560px)] sm:max-h-[min(70dvh,560px)]'
           }`}
         >
           <div className="glass glass-frost glass-panel-warp flex h-full flex-col overflow-hidden rounded-[28px]">

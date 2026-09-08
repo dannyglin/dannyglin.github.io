@@ -327,3 +327,19 @@ Routing is hash-based, so no SPA 404 fallback is needed.
 - **2026-09-08 (edits 5)** - First commit of the whole accumulated working tree
   (everything from 2026-09-07 on had been uncommitted). Added the "Deploy"
   section; GitHub Pages workflow already existed at `.github/workflows/deploy.yml`.
+- **2026-09-09** - Chat assistant fixes. (1) Model download was failing with
+  "Failed to execute 'add' on 'Cache': ... network error". web-llm's default
+  Cache-API backend calls `Cache.add()`, which throws on a redirect/opaque
+  response from the HF CDN or in storage-restricted contexts. `lib/chat/engine.ts`
+  now passes `appConfig: { ...prebuiltAppConfig, cacheBackend: 'indexeddb' }` to
+  `CreateMLCEngine` - IndexedDB has none of those edge cases. (2) Mobile: the
+  open chat panel used to float as a large centred card over the page with no
+  backdrop ("covering everything"). Below `sm` it is now a bottom sheet
+  (`inset-x-2 bottom-2`, `h-[min(75dvh,560px)]`) behind a tap-to-close scrim
+  (`bg-black/50 sm:hidden`), and `ChatWidget` locks `document.body` scroll while
+  open on phones (`matchMedia('(max-width: 639px)')`). `>=sm` is unchanged - the
+  small floating 400px card, no scrim, page stays scrollable. (3) Nudged
+  `ferrothorn` up 12px in `TrainerCluster.tsx` (`y: 274 -> 262`).
+  Note: the live chat model is `SmolLM2-360M-Instruct-q4f16_1-MLC` (set in
+  `engine.ts` with a comment on the tradeoff), not the Llama-3.2-1B named in the
+  2026-09-08 entry above.

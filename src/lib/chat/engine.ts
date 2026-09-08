@@ -50,7 +50,17 @@ export function loadEngine(
       const webllm = await import('@mlc-ai/web-llm')
       return webllm.CreateMLCEngine(
         CHAT_MODEL_ID,
-        { initProgressCallback: (r) => onProgress?.(r) },
+        {
+          // Store the downloaded weights in IndexedDB instead of the Cache API.
+          // The default Cache backend calls `Cache.add()`, which throws
+          // "Failed to execute 'add' on 'Cache': ... network error" whenever the
+          // HF CDN answers with a redirect/opaque response or the browser is in
+          // a context where the Cache API is restricted (some privacy modes,
+          // storage-pressure eviction). IndexedDB has none of those edge cases
+          // and is available everywhere WebGPU is.
+          appConfig: { ...webllm.prebuiltAppConfig, cacheBackend: 'indexeddb' },
+          initProgressCallback: (r) => onProgress?.(r),
+        },
         { context_window_size: CHAT_CONTEXT_WINDOW },
       )
     })().catch((err) => {
