@@ -39,7 +39,7 @@ const TRAINER: Sprite = {
 
 // Left arm runs nearest-the-trainer -> tip, then the right arm.
 const TEAM: Sprite[] = [
-  { name: 'ferrothorn', heightM: 1.0, x: 216, y: 260 },
+  { name: 'ferrothorn', heightM: 1.0, x: 216, y: 274 },
   { name: 'metagross', heightM: 1.6, x: 162, y: 256 },
   { name: 'dialga', heightM: 5.4, px: 186, x: 100, y: 202 },
   { name: 'skarmory', heightM: 1.7, x: 292, y: 232 },
