@@ -205,12 +205,21 @@ Pixel-art PNGs in `public/sprites/` (all carry `.pixel-sprite` -> `image-renderi
 
 **Reduced motion:** the `@media (prefers-reduced-motion: reduce)` block does not
 switch the easter-egg off - it calms it: the bob height drops (`--bob` var:
-`-7px -> -3px`) and slows (`7s`), and `.blurb-runner` slows to a `32s` drift
-instead of `display: none`. (It is still fully hidden where `offset-path` is
-unsupported.)
+`-12% -> -5%` of the sprite's own size) and slows (`7s`), and `.blurb-runner`
+slows to a `32s` drift instead of `display: none`. (It is still fully hidden
+where `offset-path` is unsupported.)
 
-Sprites were re-encoded through `sips` to strip junk metadata (2.2 MB -> ~36 KB
-total); keep new sprites lean.
+**The sprites are APNGs, not static PNGs** - every file in `public/sprites/`
+carries real walk-cycle animation frames (`acTL`/`fcTL`/`fdAT` chunks), which
+Chromium/Firefox/Safari all play natively through a plain `<img>` tag, no JS or
+`<canvas>` needed. **Do not run them through `sips`** (or any single-frame
+image tool) - `sips` silently flattens an APNG to its first frame and there is
+no warning, which is exactly what happened on 2026-09-08: it "optimized" them
+from 2.2 MB to ~36 KB by deleting every frame but one, and the walk cycle
+appeared to just be a static picture for the next day (see 2026-09-09 edits 4).
+If a sprite ever needs recompressing, use an APNG-aware tool (e.g. `apngopt`)
+and verify frame count survives (`python3 -c "from PIL import Image;
+print(Image.open(p).n_frames)"` should be > 1) before committing.
 
 ### Mobile nav
 
@@ -373,3 +382,23 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   a before/after screenshot diff that the visible motion increased
   substantially. `.blurb-runner` (the motion-path runner) was already moving
   correctly on both engines and was left alone.
+- **2026-09-09 (edits 4)** - The real bug behind "still not moving": the owner
+  meant the sprites should walk-cycle (frame animation), not just bob. Every
+  sprite in `public/sprites/` is actually an APNG - the versions still sitting
+  in `~/Downloads` (`male_charactor.png`, `male_running.png`, `dialga.png`,
+  `metagross.png`, `empoleon.png`, `scizor.png`, `ferrothorn.png`,
+  `skamory.png`) all carry `acTL`/`fcTL`/`fdAT` chunks and 4-520 frames each
+  (confirmed with Pillow's `n_frames`). The 2026-09-08 "re-encoded through
+  `sips` to strip junk metadata" pass (see old note just above) had silently
+  flattened every one of them to their first frame only - `sips` doesn't know
+  APNG exists, so it just re-saved frame 0 as a normal PNG, which is why the
+  file size dropped from 2.2 MB to ~36 KB and why nothing ever animated.
+  Fix: copied the original animated files from `~/Downloads` back over
+  `public/sprites/*.png` unchanged (also fixed `skamory.png` -> `skarmory.png`,
+  a typo in the Downloads filename that doesn't match `TrainerCluster.tsx`'s
+  `name: 'skarmory'`). Verified real frame-by-frame playback with Playwright by
+  disabling all CSS animation/transform and diffing screenshots of a sprite
+  over time (pixels changed - confirms APNG decode, not just the CSS bob).
+  Total sprite payload is back to ~2.2 MB (`scizor.png` alone is ~1.2 MB,
+  520 frames) - no longer "keep new sprites lean" until there's an APNG-safe
+  way to shrink them (see the note above this history section).
