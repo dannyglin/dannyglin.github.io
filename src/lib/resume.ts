@@ -279,18 +279,45 @@ export const skills: { group: string; items: string[] }[] = [
 export type Photo = {
   title: string
   location: string
-  /** Real photo in /public/photos - takes priority over `swatch` when set. */
-  src?: string
-  /** Placeholder gradient shown until a real photo replaces it. */
+  /** File in /public/photos, shown cropped (aspect-[4/5]) in the grid and
+   * uncropped in the click-to-expand lightbox. */
+  src: string
+  /** Tile color shown while `src` loads. */
   swatch: string
 }
 
+// Order: Tromso (most recent) -> Bergen -> Rosendal -> Copenhagen -> Mount
+// Putuo (2018, the oldest) last.
 export const photos: Photo[] = [
   {
-    title: 'Ivy-Covered Temple Wall',
-    location: 'Mount Putuo, China',
-    src: '/photos/putuoshan-china.jpg',
-    swatch: 'linear-gradient(135deg, #14532d, #4ade80)',
+    title: 'Fjord Valley',
+    location: 'Tromso, Norway',
+    src: '/photos/tromso-norway.jpg',
+    swatch: 'linear-gradient(135deg, #1e3a8a, #60a5fa)',
+  },
+  {
+    title: 'Highland Sheep',
+    location: 'Bergen, Norway',
+    src: '/photos/bergen-sheep-norway.jpg',
+    swatch: 'linear-gradient(135deg, #164e63, #a5f3fc)',
+  },
+  {
+    title: 'Rose Garden',
+    location: 'Rosendal, Norway',
+    src: '/photos/rosendal-roses-norway.jpg',
+    swatch: 'linear-gradient(135deg, #7f1d1d, #f472b6)',
+  },
+  {
+    title: 'Starlings Over the Valley',
+    location: 'Rosendal, Norway',
+    src: '/photos/rosendal-starlings-norway.jpg',
+    swatch: 'linear-gradient(135deg, #14532d, #a3e635)',
+  },
+  {
+    title: 'Mossy Branch, Foggy Peak',
+    location: 'Rosendal, Norway',
+    src: '/photos/rosendal-mossy-branch-norway.jpg',
+    swatch: 'linear-gradient(135deg, #365314, #84cc16)',
   },
   {
     title: 'Nyhavn Harbor',
@@ -299,39 +326,9 @@ export const photos: Photo[] = [
     swatch: 'linear-gradient(135deg, #7c2d12, #fbbf24)',
   },
   {
-    title: 'Fjord Valley',
-    location: 'Tromso, Norway',
-    src: '/photos/tromso-norway.jpg',
-    swatch: 'linear-gradient(135deg, #1e3a8a, #60a5fa)',
-  },
-  {
-    title: 'Blue Hour, Center City',
-    location: 'Philadelphia, PA',
-    swatch: 'linear-gradient(135deg, #1e3a8a, #0ea5e9)',
-  },
-  {
-    title: 'Salt Marsh',
-    location: 'Long Island, NY',
-    swatch: 'linear-gradient(135deg, #065f46, #34d399)',
-  },
-  {
-    title: 'Overpass',
-    location: 'Middletown, NJ',
-    swatch: 'linear-gradient(135deg, #7c2d12, #f59e0b)',
-  },
-  {
-    title: 'Fog on the Schuylkill',
-    location: 'Philadelphia, PA',
-    swatch: 'linear-gradient(135deg, #334155, #94a3b8)',
-  },
-  {
-    title: 'Late Train',
-    location: 'Newark, NJ',
-    swatch: 'linear-gradient(135deg, #4c1d95, #c084fc)',
-  },
-  {
-    title: 'Low Tide',
-    location: 'Montauk, NY',
-    swatch: 'linear-gradient(135deg, #0f766e, #5eead4)',
+    title: 'Ivy-Covered Temple Wall',
+    location: 'Mount Putuo, China',
+    src: '/photos/putuoshan-china.jpg',
+    swatch: 'linear-gradient(135deg, #14532d, #4ade80)',
   },
 ]

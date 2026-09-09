@@ -259,12 +259,18 @@ Some fields are user-provided, not from the PDF:
   unconditionally.
 - **Projects** - `projects[]` (ROM Randomizer) + "Shipped at work" cards derived
   from `experience[]` entries that have a `team`.
-- **Photography** - `photos[]` entries can now carry an optional `src`
-  pointing at a real file in `public/photos/`; `Photography.tsx` renders an
-  `<img>` (object-cover, same `aspect-[4/5]` box) when `src` is set, falling
-  back to the CSS gradient `swatch` otherwise. `swatch` is still required on
-  every entry - it's the only visual for the older entries that have no real
-  photo yet.
+- **Photography** - all 7 `photos[]` entries are real now (the 6 placeholder
+  gradients are gone); `src` is required, pointing at a file in
+  `public/photos/`. `swatch` is the tile color shown under the `<img>` while it
+  loads (wrapper `div` background, `Photography.tsx`). Order is deliberate -
+  Tromso (most recent) -> Bergen -> the 3 Rosendal photos -> Copenhagen ->
+  Mount Putuo (2018, the oldest) - and the last entry always gets
+  `sm:col-start-2 lg:col-start-3` so it lands in the bottom-right cell of
+  the grid regardless of how many photos come before it (leaving the rest of
+  that row empty rather than flowing left). Clicking any card opens a
+  `Lightbox` (same file) showing the uncropped original full-size,
+  dismissible via Escape, backdrop click, or its close button; it locks body
+  scroll while open, same pattern as `ChatWidget`'s mobile sheet.
 - **Resume** - Download PDF / Open in new tab buttons + a text version of
   experience + education. (The inline `<object>`/`<iframe>` PDF preview was
   removed at the owner's request.)
@@ -442,3 +448,23 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   div when `src` is set. Reworded the tab's intro line since "a rotating set
   of frames from around the Northeast" was never true of these and is even
   less true now; the other 6 cards are still the original placeholders.
+- **2026-09-09 (edits 8)** - 4 more real photos (Rosendal x3 - roses,
+  starlings, mossy branch/foggy peak - plus a Bergen sheep pasture), and the 6
+  remaining placeholder gradient entries removed - all 7 `photos[]` entries
+  are real now, `src` is required. Order is deliberate, set by the owner:
+  Tromso -> Bergen -> the 3 Rosendal photos -> Copenhagen -> Mount Putuo
+  (2018, the oldest) last. The last entry gets `sm:col-start-2
+  lg:col-start-3` so it always lands in the grid's bottom-right cell no
+  matter the total count, leaving any remaining cells in that row empty
+  rather than flowing it left. Added click-to-expand: each card opens a
+  `Lightbox` showing the uncropped original (`object-contain`, no crop),
+  closable via Escape / backdrop click / a `glass-control` close button, body
+  scroll locked while open. **The lightbox is portaled to `document.body`**
+  (`createPortal`) rather than rendered inline - the per-tab wrapper in
+  `App.tsx` has `will-change: transform` for its slide-in animation, which
+  creates a new containing block for any `position: fixed` descendant, so
+  rendered inline the modal centered itself within that (page-length) section
+  box instead of the viewport - looked right at the top of the page but
+  cropped/offset once scrolled down before opening it. Portaling escapes that
+  entirely; it's the same reason `ChatWidget` is mounted directly in
+  `App.tsx` outside the tab wrapper rather than inside a section.
