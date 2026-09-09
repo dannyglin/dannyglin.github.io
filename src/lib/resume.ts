@@ -276,15 +276,34 @@ export const skills: { group: string; items: string[] }[] = [
   },
 ]
 
-/** Placeholder gallery - swap `src` for real image files dropped in /public. */
 export type Photo = {
   title: string
   location: string
-  /** Any CSS background value; replace with `url('/photos/xyz.jpg')`. */
+  /** Real photo in /public/photos - takes priority over `swatch` when set. */
+  src?: string
+  /** Placeholder gradient shown until a real photo replaces it. */
   swatch: string
 }
 
 export const photos: Photo[] = [
+  {
+    title: 'Ivy-Covered Temple Wall',
+    location: 'Mount Putuo, China',
+    src: '/photos/putuoshan-china.jpg',
+    swatch: 'linear-gradient(135deg, #14532d, #4ade80)',
+  },
+  {
+    title: 'Nyhavn Harbor',
+    location: 'Copenhagen, Denmark',
+    src: '/photos/copenhagen-denmark.jpg',
+    swatch: 'linear-gradient(135deg, #7c2d12, #fbbf24)',
+  },
+  {
+    title: 'Fjord Valley',
+    location: 'Tromso, Norway',
+    src: '/photos/tromso-norway.jpg',
+    swatch: 'linear-gradient(135deg, #1e3a8a, #60a5fa)',
+  },
   {
     title: 'Blue Hour, Center City',
     location: 'Philadelphia, PA',

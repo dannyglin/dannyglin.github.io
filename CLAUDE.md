@@ -259,10 +259,12 @@ Some fields are user-provided, not from the PDF:
   unconditionally.
 - **Projects** - `projects[]` (ROM Randomizer) + "Shipped at work" cards derived
   from `experience[]` entries that have a `team`.
-- **Photography** - `photos[]` are **placeholders**: each has a CSS gradient
-  `swatch`, not a real image. To use real photos, drop files in `public/photos/`
-  and set `swatch: "url('/photos/x.jpg')"` (or refactor `Photography.tsx` to use
-  `<img>`).
+- **Photography** - `photos[]` entries can now carry an optional `src`
+  pointing at a real file in `public/photos/`; `Photography.tsx` renders an
+  `<img>` (object-cover, same `aspect-[4/5]` box) when `src` is set, falling
+  back to the CSS gradient `swatch` otherwise. `swatch` is still required on
+  every entry - it's the only visual for the older entries that have no real
+  photo yet.
 - **Resume** - Download PDF / Open in new tab buttons + a text version of
   experience + education. (The inline `<object>`/`<iframe>` PDF preview was
   removed at the owner's request.)
@@ -311,7 +313,8 @@ Routing is hash-based, so no SPA 404 fallback is needed.
 ## Known limitations / TODO ideas
 
 - Real refraction is Chromium-only by design (see above).
-- Photography is placeholder gradients until real images are added.
+- Photography has 3 real photos so far; the other 6 cards are still
+  placeholder gradients.
 - No SEO/OpenGraph tags, no analytics, no 404 route.
 
 ## History
@@ -431,3 +434,11 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   barely-visible smudge - cropped it down with `Image.getbbox()` plus an 8%
   margin before using it). `index.html`'s `<link rel="icon">` now points at
   `/favicon.png` (`image/png`).
+- **2026-09-09 (edits 7)** - First real Photography photos: added `src` to
+  `Photo` (falls back to `swatch` when unset) and 3 entries pointing at
+  `public/photos/{putuoshan-china,copenhagen-denmark,tromso-norway}.jpg` -
+  Mount Putuo (China), Nyhavn (Copenhagen), and a fjord valley near Tromso.
+  `Photography.tsx` renders an `<img object-cover>` in place of the gradient
+  div when `src` is set. Reworded the tab's intro line since "a rotating set
+  of frames from around the Northeast" was never true of these and is even
+  less true now; the other 6 cards are still the original placeholders.
