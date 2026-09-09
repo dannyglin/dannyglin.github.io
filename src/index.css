@@ -531,9 +531,12 @@ a {
 .trainer-cluster__mon {
   position: absolute; /* left / top / width / z-index come from the component */
   transform: translate(-50%, -50%);
-  /* Bob height is a variable so `prefers-reduced-motion` can shrink it (below)
+  /* Bob height is a % of the sprite's own box (not a flat px) so it reads at
+     the same relative strength on every sprite regardless of size - a flat
+     -7px was a strong bob on 78px Ferrothorn but nearly invisible on 186px
+     Dialga. It's a variable so `prefers-reduced-motion` can shrink it (below)
      rather than switch the animation off entirely. */
-  --bob: -7px;
+  --bob: -12%;
   animation: sprite-bob 3.1s ease-in-out infinite;
 }
 .trainer-cluster__self {
@@ -558,7 +561,7 @@ a {
 @media (prefers-reduced-motion: reduce) {
   .trainer-cluster__self,
   .trainer-cluster__mon {
-    --bob: -3px;
+    --bob: -5%;
     animation-duration: 7s;
   }
   .blurb-runner {

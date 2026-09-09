@@ -362,3 +362,14 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   and pulls it in so it does not spill past the viewport in that range. Not yet
   eyeballed on a real 1024-1280 screen - tune the `scale()` / `translate()` in
   `index.css` if the wedge sits wrong there.
+- **2026-09-09 (edits 3)** - Owner still saw the Pokemon + trainer sprites as
+  not moving after edits 2. Verified with headless Chromium and WebKit
+  (Playwright) that `sprite-bob` was in fact running and `prefers-reduced-motion`
+  was off - the animation was real but too subtle to read as motion: `--bob`
+  was a flat `-7px`, a clear bob on 78px Ferrothorn but only ~4% of 186px
+  Dialga's height, easy to miss at a glance. Changed `--bob` to a percentage
+  (`-12%`, reduced-motion `-5%`) in `index.css` so every sprite bobs by the same
+  fraction of its own size regardless of literal px dimensions. Confirmed with
+  a before/after screenshot diff that the visible motion increased
+  substantially. `.blurb-runner` (the motion-path runner) was already moving
+  correctly on both engines and was left alone.
