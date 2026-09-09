@@ -38,6 +38,9 @@ export type Education = {
   detail: string
   start: string
   end: string
+  /** Relevant coursework, grouped for display (School tab). Optional - only
+   * schools with a curated list render a "Relevant coursework" block. */
+  courses?: { group: string; items: string[] }[]
 }
 
 export const education: Education[] = [
@@ -48,6 +51,28 @@ export const education: Education[] = [
     detail: 'GPA: 3.85 / 4.00',
     start: 'Sep. 2023',
     end: 'Dec. 2025',
+    courses: [
+      {
+        group: 'Core',
+        items: [
+          'Introduction to Software Development',
+          'Mathematical Foundations of Computer Science',
+          'Introduction to Computer Systems',
+          'Data Structures & Software Design',
+          'Computer Systems Programming',
+          'Algorithms',
+        ],
+      },
+      {
+        group: 'Electives',
+        items: [
+          'Artificial Intelligence',
+          'Natural Language Processing',
+          'Machine Learning for Data Science',
+          'Statistics for Data Science',
+        ],
+      },
+    ],
   },
   {
     school: 'Stony Brook University',
@@ -56,6 +81,47 @@ export const education: Education[] = [
     detail: 'GPA: 3.65 / 4.00 - Magna Cum Laude',
     start: 'Aug. 2018',
     end: 'May 2022',
+    courses: [
+      {
+        group: 'Mathematics & Statistics',
+        items: [
+          'Calculus A, B & C',
+          'Applied Calculus III',
+          'Applied Calculus IV: Differential Equations',
+          'Applied Linear Algebra',
+          'Survey of Probability & Statistics',
+          'Finite Mathematical Structures',
+          'Data Analysis',
+          'Financial Mathematics',
+          'Operations Research I: Deterministic Models',
+          'Graph Theory',
+        ],
+      },
+      {
+        group: 'Business Management',
+        items: [
+          'Introduction to Business',
+          'Introduction to Economics',
+          'Financial Accounting',
+          'Intro to Business Statistics',
+          'Intro to Decision Sciences',
+          'Organizational Behavior',
+          'Principles of Finance',
+          'Principles of Marketing',
+          'Business Communications',
+          'International Finance',
+          'Operations Management',
+          'Financial Management',
+          'Financial Analysis with Excel',
+          'Business Strategy',
+          'Business Ethics',
+          'Data Mining',
+          'Risk Management & Insurance',
+          'Information Systems in Management',
+          'Principles of Project Management',
+        ],
+      },
+    ],
   },
 ]
 

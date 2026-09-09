@@ -19,6 +19,27 @@ export default function School() {
               <span className="chip">{e.location}</span>
               <span className="chip">{e.detail}</span>
             </div>
+            {e.courses && (
+              <div className="mt-6 space-y-4 border-t border-[var(--line)] pt-5">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+                  Relevant coursework
+                </h3>
+                {e.courses.map((c) => (
+                  <div key={c.group}>
+                    <p className="mb-2 text-sm font-medium text-[var(--ink-dim)]">
+                      {c.group}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {c.items.map((i) => (
+                        <span key={i} className="chip">
+                          {i}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </GlassPanel>
         ))}
       </div>

@@ -250,7 +250,11 @@ Some fields are user-provided, not from the PDF:
 
 - **About** - bio paragraphs + "Currently" card (experience[0]) + skills grid +
   hobbies ("Off the clock").
-- **School** - education cards only (the GPA/honors "Snapshot" panel was removed).
+- **School** - education cards only (the GPA/honors "Snapshot" panel was
+  removed). Each card can carry an optional `courses: {group, items}[]` (same
+  shape as `skills` in "Toolbox") rendered as a "Relevant coursework" block of
+  labeled chip groups below the degree/GPA chips - only shows up for schools
+  that define it.
 - **Projects** - `projects[]` (ROM Randomizer) + "Shipped at work" cards derived
   from `experience[]` entries that have a `team`.
 - **Photography** - `photos[]` are **placeholders**: each has a CSS gradient
@@ -402,3 +406,16 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   Total sprite payload is back to ~2.2 MB (`scizor.png` alone is ~1.2 MB,
   520 frames) - no longer "keep new sprites lean" until there's an APNG-safe
   way to shrink them (see the note above this history section).
+- **2026-09-09 (edits 5)** - Added `courses` to both `education[]` entries in
+  `resume.ts` (School tab). Stony Brook's list is transcribed from the
+  owner's official transcript (`~/Documents/Personal/School/College
+  Transcripts/`), filtered to courses that count toward the two declared
+  majors (Applied Math & Statistics, Business Management) - gen-ed/DEC
+  courses (history, film, chinese, etc.), internships, and the teaching
+  practicum are left out as not degree-relevant. Penn's list is the MCIT/MAS-CS
+  curriculum looked up from Penn Engineering's course catalog: the owner
+  completed all 6 core units (CIT 5910-5960) plus 4 electives (CIS 5210 AI,
+  CIS 5300 NLP, ESE 5410 ML for Data Science, ESE 5420 Statistics for Data
+  Science). `School.tsx` renders `courses` as grouped chip clouds under a
+  "Relevant coursework" divider - same visual language as the About "Toolbox"
+  grid. Nothing else on the tab changed.
