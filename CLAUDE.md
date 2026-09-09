@@ -252,9 +252,11 @@ Some fields are user-provided, not from the PDF:
   hobbies ("Off the clock").
 - **School** - education cards only (the GPA/honors "Snapshot" panel was
   removed). Each card can carry an optional `courses: {group, items}[]` (same
-  shape as `skills` in "Toolbox") rendered as a "Relevant coursework" block of
-  labeled chip groups below the degree/GPA chips - only shows up for schools
-  that define it.
+  shape as `skills` in "Toolbox"). It's collapsed by default behind a
+  `button.chip` toggle ("Relevant coursework" / "Hide coursework", `+`/`-`)
+  next to the location/GPA chips, `useState` per card in `EducationCard`
+  (`School.tsx`) - the full chip list was too much vertical space to show
+  unconditionally.
 - **Projects** - `projects[]` (ROM Randomizer) + "Shipped at work" cards derived
   from `experience[]` entries that have a `team`.
 - **Photography** - `photos[]` are **placeholders**: each has a CSS gradient
@@ -310,8 +312,7 @@ Routing is hash-based, so no SPA 404 fallback is needed.
 
 - Real refraction is Chromium-only by design (see above).
 - Photography is placeholder gradients until real images are added.
-- No SEO/OpenGraph tags, no analytics, no 404 route, no favicon of Danny's own
-  (still the Vite default `public/favicon.svg`).
+- No SEO/OpenGraph tags, no analytics, no 404 route.
 
 ## History
 
@@ -419,3 +420,14 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   Science). `School.tsx` renders `courses` as grouped chip clouds under a
   "Relevant coursework" divider - same visual language as the About "Toolbox"
   grid. Nothing else on the tab changed.
+- **2026-09-09 (edits 6)** - Owner said the coursework list ate too much
+  vertical space. Refactored `School.tsx` into an `EducationCard` component
+  with local `useState`; the coursework block is now collapsed by default
+  behind a `button.chip` toggle next to the location/GPA chips. Also swapped
+  the favicon: `public/favicon.svg` (Vite's default) is gone, replaced by
+  `public/favicon.png` - a Ditto sprite from `~/Downloads/ditto.png`, tightly
+  cropped to its non-transparent bounding box (the original had ~60% empty
+  padding around a small centered sprite, so at 16-32px it rendered as a
+  barely-visible smudge - cropped it down with `Image.getbbox()` plus an 8%
+  margin before using it). `index.html`'s `<link rel="icon">` now points at
+  `/favicon.png` (`image/png`).
