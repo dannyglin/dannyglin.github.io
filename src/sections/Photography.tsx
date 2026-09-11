@@ -81,10 +81,7 @@ export default function Photography() {
         {photos.map((photo, i) => (
           <GlassPanel
             key={photo.title}
-            className={
-              'group cursor-pointer overflow-hidden p-0' +
-              (i === photos.length - 1 ? ' sm:col-start-2 lg:col-start-3' : '')
-            }
+            className="group cursor-pointer overflow-hidden p-0"
             hover
             onClick={() => setOpenIndex(i)}
           >

@@ -262,15 +262,18 @@ Some fields are user-provided, not from the PDF:
 - **Photography** - all 7 `photos[]` entries are real now (the 6 placeholder
   gradients are gone); `src` is required, pointing at a file in
   `public/photos/`. `swatch` is the tile color shown under the `<img>` while it
-  loads (wrapper `div` background, `Photography.tsx`). Order is deliberate -
-  Tromso (most recent) -> Bergen -> the 3 Rosendal photos -> Copenhagen ->
-  Mount Putuo (2018, the oldest) - and the last entry always gets
-  `sm:col-start-2 lg:col-start-3` so it lands in the bottom-right cell of
-  the grid regardless of how many photos come before it (leaving the rest of
-  that row empty rather than flowing left). Clicking any card opens a
-  `Lightbox` (same file) showing the uncropped original full-size,
-  dismissible via Escape, backdrop click, or its close button; it locks body
-  scroll while open, same pattern as `ChatWidget`'s mobile sheet.
+  loads (wrapper `div` background, `Photography.tsx`). **Newest-first order,
+  no positioning code**: add new photos at the top of the array; the grid has
+  no per-item placement logic at all, it just flows in array order,
+  left-to-right top-to-bottom, so the oldest photo (currently Mount Putuo,
+  2018) sits wherever that leaves it and drifts one cell to the right each
+  time a photo is added ahead of it, wrapping to a new row's start once the
+  current row fills. Clicking any card opens a `Lightbox` (same file) showing
+  the uncropped original full-size, dismissible via Escape, backdrop click, or
+  its close button; it locks body scroll while open, same pattern as
+  `ChatWidget`'s mobile sheet. **The lightbox is portaled to
+  `document.body`** (`createPortal`), not rendered inline - see "edits 8"
+  below for why.
 - **Resume** - Download PDF / Open in new tab buttons + a text version of
   experience + education. (The inline `<object>`/`<iframe>` PDF preview was
   removed at the owner's request.)
@@ -468,3 +471,15 @@ Routing is hash-based, so no SPA 404 fallback is needed.
   cropped/offset once scrolled down before opening it. Portaling escapes that
   entirely; it's the same reason `ChatWidget` is mounted directly in
   `App.tsx` outside the tab wrapper rather than inside a section.
+- **2026-09-09 (edits 9)** - Reworked how the oldest photo is positioned.
+  Owner wants reading order to mean something: newest photo top-left, and the
+  oldest (Mount Putuo) should drift leftward-to-rightward over time as new
+  photos are added ahead of it, rather than being pinned to one corner
+  forever. Removed the `sm:col-start-2 lg:col-start-3` override added in
+  "edits 8" - that hack forced the last photo into the bottom-right cell
+  regardless of count, which is the opposite of "moves as the grid grows".
+  With it gone the grid is pure array order (see the updated comment above
+  `photos` in `resume.ts`): at the current count of 7 that puts Mount Putuo
+  bottom-*left*, and adding one more photo at the top pushes it one cell
+  right, by construction of a 3-column grid - no positioning code to update
+  as the list grows, which is the "scalable" part.

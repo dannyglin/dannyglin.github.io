@@ -286,8 +286,10 @@ export type Photo = {
   swatch: string
 }
 
-// Order: Tromso (most recent) -> Bergen -> Rosendal -> Copenhagen -> Mount
-// Putuo (2018, the oldest) last.
+// Newest-first: add new photos at the top. The grid (Photography.tsx) just
+// flows this order left-to-right, top-to-bottom with no positioning code, so
+// the oldest photo naturally drifts rightward as new ones are added ahead of
+// it, wrapping to the start of a new row once the current one fills up.
 export const photos: Photo[] = [
   {
     title: 'Fjord Valley',
