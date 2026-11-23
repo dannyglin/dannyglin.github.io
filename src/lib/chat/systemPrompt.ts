@@ -31,7 +31,7 @@ function buildPrompt(): string {
   const proj = projects
     .map((p) => {
       const pts = p.points.map((x) => `  - ${flat(x)}`).join('\n')
-      return `- ${p.name} (${p.stack.join(', ')})\n${pts}`
+      return `- ${p.name} (${p.stack.join(', ')}): ${p.summary}\n${pts}`
     })
     .join('\n')
 

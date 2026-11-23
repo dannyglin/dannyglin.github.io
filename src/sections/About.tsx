@@ -13,11 +13,10 @@ export default function About() {
             Hi, I&apos;m Danny.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[var(--ink-dim)]">
-            I&apos;m a software engineer at AT&amp;T working on 100 billion rows
-            of data - cleaning, parsing, and transforming them into a story.
-            I&apos;ve worked on full-stack development, RAG pipelines, and
-            time-series machine learning concepts across the Cyber Security
-            Office, Network Chief Technology Office, and Optical Network team.
+            I&apos;m a senior software engineer at AT&amp;T. I build data pipelines
+            and web tools that help analysts search firewall logs, investigate
+            alerts, and review support chats. I&apos;ve also worked on network
+            inventory and search tools for network engineers.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[var(--ink-dim)]">
             I earned my M.S. in Computer Science from the University of

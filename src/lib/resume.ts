@@ -6,9 +6,9 @@
 
 export const profile = {
   name: 'Danny Lin',
-  title: 'Software Engineer',
+  title: 'Senior Software Engineer',
   blurb:
-    'Software Engineer working on large-scale data, agent workflows, and creative solutions.',
+    'I build data tools at AT&T and develop apps for macOS, iOS, and the web.',
   location: 'New York City, New York',
   email: 'danny.lin.careers@gmail.com',
   phone: '850-490-7526',
@@ -137,18 +137,18 @@ export type Job = {
 
 export const experience: Job[] = [
   {
-    role: 'Software Engineer',
+    role: 'Senior Software Engineer',
     team: 'Cyber Security Office',
     company: 'AT&T',
     location: 'Middletown, NJ',
     start: 'June 2026',
     end: 'Present',
     points: [
-      'Made 100B+ rows of firewall logs searchable for the first time by building a PySpark pipeline on Databricks that splits each raw log message into 70+ typed columns, unblocking an $850K threat-detection program.',
-      'Created a React web app that cut LLM spend 30% on a customer-facing support chatbot by building an evaluation pipeline that grades every conversation for answer quality and abuse risk, then feeds the worst offenders (bots, spammers, and so on) to an Akamai web application firewall block list.',
-      'Cut 6 hours a week of raw log reading with SQL reports ranking top hostnames and most-triggered firewall rules.',
-      'Built the internal React / Azure / PostgreSQL app where analysts read flagged chats and override the model on 2% of them.',
-      'Shortened feature turnaround by running Claude Code and Copilot agents against a checked-in CLAUDE.md, custom slash commands, and pre-commit hooks, with MCP servers connecting the agents to internal data sources.',
+      'Made 100B+ firewall records searchable by parsing raw logs into 70+ typed fields with PySpark on Databricks, enabling a $750K threat-detection program.',
+      'Joined 12B+ traffic records with firewall inventories to assign alert ownership and eliminate manual lookup.',
+      'Saved analysts 6 hours per week by building SQL reports that ranked hostnames and firewall rules by activity.',
+      'Screened support chats for answer quality and abuse risk, routing high-risk cases to an Akamai WAF blocklist.',
+      'Built a React app backed by Azure and PostgreSQL so analysts could review flagged chats and override model decisions.',
     ],
   },
   {
@@ -159,10 +159,10 @@ export const experience: Job[] = [
     start: 'July 2025',
     end: 'May 2026',
     points: [
-      'Generated $8M in IPv4 address sales and leasing by writing Python jobs that cross-reference usage against billing records to find address blocks the company pays to hold but nobody uses.',
-      'Replaced hand-kept spreadsheets for 5 business units with scheduled PySpark ETL jobs landing clean data in Azure.',
-      'Traced 2M+ IP allocations to their owning team by reconciling three inventory systems that disagreed, including ARIN.',
-      'Gave 4 React dashboards one number to agree on by structuring a bronze/silver/gold Databricks pipeline that validates raw GitHub, Excel, and CSV inputs before reporting reads them.',
+      'Built a React and PostgreSQL platform that matched 2M+ IPv4 allocations against billing records to find unused blocks, supporting $8M in sales and leasing.',
+      'Replaced spreadsheets for five business units with scheduled Databricks ETL jobs using PySpark and Azure.',
+      'Detected 300+ DNS anomalies in one month by using Prophet to forecast traffic across seven load balancers.',
+      'Built a RAG-backed feed and interactive graph so engineers could explore live connections between IP addresses.',
     ],
   },
   {
@@ -173,40 +173,67 @@ export const experience: Job[] = [
     start: 'June 2024',
     end: 'Aug. 2024',
     points: [
-      'Built a RAG web app in Streamlit over a Pinecone vector store that cut documentation search time 85% for network engineers.',
-      'Reached 90% retrieval accuracy on real engineer questions by tuning chunking and retrieval in a GPT-4 RAG system.',
-      'Indexed 1,000 PDF manuals into embeddings with a Python pipeline, cutting manual research effort 30%.',
+      'Cut lookup time by 85% with a GPT-4 and Streamlit assistant that searched 1,000+ network manuals.',
+      'Indexed manuals in Pinecone with Python, then tuned retrieval to score 90% accuracy on field engineers’ questions.',
     ],
   },
   {
     role: 'Data Analyst',
-    team: '',
+    team: 'Accountable Care Organization Interface',
     company: 'Milliman',
     location: 'Manhattan, NY',
     start: 'June 2022',
     end: 'June 2023',
     points: [
-      'Cut monthly client usage report production 80% and removed copy-paste errors by rebuilding it in VBA.',
-      'Let clients compare their portfolio to peer averages and percentiles with a PySpark ETL pipeline over 6 source databases.',
+      'Rebuilt monthly usage reporting in VBA, cutting prep time by 80% and eliminating copy-and-paste errors.',
+      'Combined six databases with PySpark so clients could benchmark portfolios against peer averages and percentiles.',
+      'Cut CMS download time for client production runs by 35% with Selenium scripts.',
     ],
   },
 ]
 
 export type Project = {
   name: string
+  platform: string
+  summary: string
   stack: string[]
   points: string[]
-  link?: string
+  links?: { label: string; href: string }[]
 }
 
 export const projects: Project[] = [
   {
-    name: 'ROM Randomizer Web App',
-    stack: ['React', 'TypeScript', 'Java', 'BullMQ', 'Redis', 'Docker'],
+    name: 'Pocket Randomizer',
+    platform: 'Web app',
+    summary: 'Customize trainer teams and wild encounters in Pokémon games for Game Boy Advance, Nintendo DS, and Nintendo 3DS.',
+    stack: ['Java', 'CheerpJ', 'Node.js'],
     points: [
-      'Kept the site responsive during randomization jobs too long for a web request by handing work from React/Express to a background worker over BullMQ and Redis.',
-      'Stopped the web form and the Java CLI from drifting apart by generating both from one JSON schema of 150+ settings.',
-      'Fit web, API, worker, and Redis onto a free-tier 1GB-RAM VM by tuning Docker memory limits, concurrency, and JVM heap.',
+      'Ported the Java randomizer to the browser with CheerpJ so game files are processed locally in the tab.',
+      'Added rules such as evolving eligible trainer Pokémon at level 30 and above.',
+    ],
+    links: [
+      { label: 'Open Pocket Randomizer', href: 'https://pocket-randomizer.pages.dev/' },
+      { label: 'Source on GitHub', href: 'https://github.com/dannyglin/pokemon-rom-randomizer' },
+    ],
+  },
+  {
+    name: 'Stilltide',
+    platform: 'macOS app',
+    summary: 'A native live wallpaper player that turns local photos and videos into desktop backgrounds.',
+    stack: ['Swift', 'SwiftUI', 'AppKit', 'AVFoundation', 'Core Audio'],
+    points: [
+      'Renders wallpapers per display and keeps the previous wallpaper visible until the next video frame is ready.',
+      'Uses system audio to drive a 12-band spectrum and independent stereo effects.',
+    ],
+  },
+  {
+    name: 'Tomato',
+    platform: 'iOS app · Private beta',
+    summary: 'An accountability app for daily tasks where friends can react to unfinished work by throwing virtual tomatoes.',
+    stack: ['Swift', 'SwiftUI', 'Supabase', 'PostgreSQL'],
+    points: [
+      'Reached 20 private beta users with daily prompts and a friends feed.',
+      'Built friend requests, comments, reactions, and per-post visibility in Supabase so users could control what they shared.',
     ],
   },
 ]
@@ -214,65 +241,19 @@ export const projects: Project[] = [
 export const skills: { group: string; items: string[] }[] = [
   {
     group: 'Languages',
-    items: [
-      'Python',
-      'SQL',
-      'Java',
-      'JavaScript',
-      'TypeScript',
-      'Go',
-      'Swift',
-      'Assembly',
-      'VBA',
-      'R',
-      'C/C++',
-      'HTML/CSS',
-    ],
+    items: ['Python', 'SQL', 'Java', 'JavaScript', 'TypeScript', 'Swift', 'Go', 'C/C++', 'VBA'],
   },
   {
     group: 'Frameworks & Libraries',
-    items: [
-      'PySpark',
-      'Pandas',
-      'React',
-      'Node/Express',
-      'Streamlit',
-      'Selenium',
-      'Prophet',
-      'DeepAR',
-      'SwiftUI',
-      'BullMQ',
-    ],
+    items: ['PySpark', 'Pandas', 'React', 'Node.js/Express', 'SwiftUI', 'Streamlit', 'Selenium', 'Prophet', 'BullMQ'],
   },
   {
-    group: 'Data / Cloud / DevOps',
-    items: [
-      'Databricks',
-      'Azure Data Lake',
-      'Snowflake',
-      'PostgreSQL',
-      'MongoDB',
-      'Redis',
-      'SQLite',
-      'Supabase',
-      'Docker',
-      'Git',
-    ],
+    group: 'Data & Cloud',
+    items: ['Databricks', 'Azure Data Lake', 'PostgreSQL', 'Snowflake', 'Redis', 'Supabase', 'Docker', 'Git'],
   },
   {
     group: 'AI / ML',
-    items: [
-      'Claude Code',
-      'Copilot',
-      'MCP servers',
-      'Agent workflows',
-      'LLM evaluation',
-      'RAG',
-      'LangChain',
-      'Hugging Face',
-      'Pinecone',
-      'Ollama',
-    ],
+    items: ['LLM evaluation', 'RAG', 'LangChain', 'Pinecone', 'Hugging Face', 'Ollama'],
   },
 ]
 

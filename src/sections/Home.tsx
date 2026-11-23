@@ -1,13 +1,8 @@
 import GlassButton from '../components/GlassButton'
 import GlassPanel from '../components/GlassPanel'
 import TrainerCluster from '../components/TrainerCluster'
-import { profile } from '../lib/resume'
+import { profile, projects } from '../lib/resume'
 import type { Tab } from '../lib/tabs'
-
-const highlights = [
-  'M.S. Computer Science, University of Pennsylvania',
-  'B.S. Applied Mathematics + Business Management, Stony Brook University',
-]
 
 export default function Home({ onNavigate }: { onNavigate: (t: Tab) => void }) {
   return (
@@ -25,16 +20,11 @@ export default function Home({ onNavigate }: { onNavigate: (t: Tab) => void }) {
       <div className="blurb-wrap mt-10 max-w-2xl">
         <GlassPanel className="p-6 sm:p-8">
           <p className="text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg">
-            {profile.blurb} Off the clock, that usually means a basketball court, a
-            trail run, or a half-built game project.
+            {profile.blurb}
           </p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {highlights.map((h) => (
-              <span key={h} className="chip">
-                {h}
-              </span>
-            ))}
-          </div>
+          <p className="mt-3 text-[var(--ink-dim)]">
+            Recent projects include {projects.map((project) => project.name).join(', ')}.
+          </p>
         </GlassPanel>
         <img
           src="/sprites/male_running.png"
@@ -45,6 +35,9 @@ export default function Home({ onNavigate }: { onNavigate: (t: Tab) => void }) {
       </div>
 
       <div className="mt-10 flex flex-wrap items-center gap-4">
+        <GlassButton className="bg-sky-100/20" href="#projects">
+          View projects
+        </GlassButton>
         <GlassButton onClick={() => onNavigate('resume')}>
           View resume
         </GlassButton>

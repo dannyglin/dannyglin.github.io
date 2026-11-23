@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
+  className?: string
   href?: string
   onClick?: () => void
   download?: boolean
@@ -17,6 +18,7 @@ type Props = {
  */
 export default function GlassButton({
   children,
+  className = '',
   href,
   onClick,
   download,
@@ -24,7 +26,7 @@ export default function GlassButton({
 }: Props) {
   const cls =
     'glass glass-frost glass-hover inline-flex items-center gap-2 rounded-full ' +
-    'px-5 py-2.5 text-sm font-semibold text-white no-underline cursor-pointer select-none'
+    'px-5 py-2.5 text-sm font-semibold text-white no-underline cursor-pointer select-none ' + className
 
   if (href) {
     return (

@@ -49,6 +49,25 @@ export default function NavBar({ active, onSelect }: Props) {
     return () => window.removeEventListener('resize', measure)
   }, [target])
 
+  // A deep link or a home-page shortcut can select a tab outside the mobile viewport.
+  useLayoutEffect(() => {
+    const scroller = scrollerRef.current
+    const button = btnRefs.current.get(active)
+    if (!scroller || !button) return
+
+    const revealActive = () => {
+      const left = button.offsetLeft
+      const right = left + button.offsetWidth
+      if (left < scroller.scrollLeft) scroller.scrollLeft = left
+      if (right > scroller.scrollLeft + scroller.clientWidth) {
+        scroller.scrollLeft = right - scroller.clientWidth
+      }
+    }
+    revealActive()
+    window.addEventListener('resize', revealActive)
+    return () => window.removeEventListener('resize', revealActive)
+  }, [active])
+
   const tabAtPoint = (x: number, y: number): Tab | null => {
     const host = document
       .elementFromPoint(x, y)
@@ -140,7 +159,7 @@ export default function NavBar({ active, onSelect }: Props) {
                   onClick={() => onSelect(tab)}
                   aria-current={active === tab ? 'page' : undefined}
                   className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold transition-colors sm:px-4 sm:text-sm ${
-                    lit ? 'text-white' : 'text-white/55 hover:text-white/85'
+                    lit ? 'text-white' : 'text-white/75 hover:text-white'
                   }`}
                 >
                   {TAB_LABELS[tab as Tab]}

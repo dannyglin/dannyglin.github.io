@@ -3,65 +3,49 @@ import SectionShell from '../components/SectionShell'
 import { experience, projects } from '../lib/resume'
 
 export default function Projects() {
-  // Pull the strongest shipped work out of the experience list too.
-  const workHighlights = experience
-    .filter((j) => j.team)
-    .map((j) => ({
-      name: `${j.company} · ${j.team}`,
-      period: `${j.start} - ${j.end}`,
-      point: j.points[0],
-    }))
+  const workHighlights = experience.filter((job) => job.company === 'AT&T')
 
   return (
-    <SectionShell
-      eyebrow="Projects"
-      title="Things I've built"
-      note="Work in progress"
-    >
-      <div className="space-y-6">
-        {projects.map((p) => (
-          <GlassPanel key={p.name} className="p-6 sm:p-8" hover>
-            <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <h2 className="text-xl font-semibold text-white">{p.name}</h2>
-              {p.link && (
-                <a
-                  href={p.link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-[var(--ink-dim)] underline decoration-white/30 underline-offset-4 hover:text-white"
-                >
-                  Visit ↗
-                </a>
+    <SectionShell eyebrow="Projects" title="Things I’ve built">
+      <div className="grid gap-5 md:grid-cols-2">
+        {projects.map((project, index) => (
+          <GlassPanel
+            key={project.name}
+            className={`p-6 sm:p-8 ${index === 0 ? 'md:col-span-2' : ''}`}
+          >
+            <article>
+              <p className="text-sm font-medium text-[var(--ink-faint)]">{project.platform}</p>
+              <h2 className="mt-1 text-2xl font-semibold text-white">{project.name}</h2>
+              <p className="mt-3 max-w-2xl leading-relaxed text-white">{project.summary}</p>
+              <ul className="mt-4 max-w-2xl list-disc space-y-2 pl-5 text-[var(--ink-dim)]">
+                {project.points.map((point) => <li key={point}>{point}</li>)}
+              </ul>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {project.stack.map((technology) => (
+                  <span key={technology} className="chip">{technology}</span>
+                ))}
+              </div>
+              {project.links && (
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+                  {project.links.map(({ href, label }) => (
+                    <a key={href} href={href} className="font-medium text-white underline underline-offset-4">
+                      {label}
+                    </a>
+                  ))}
+                </div>
               )}
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {p.stack.map((s) => (
-                <span key={s} className="chip">
-                  {s}
-                </span>
-              ))}
-            </div>
-            <ul className="mt-4 space-y-2 text-[var(--ink-dim)]">
-              {p.points.map((pt) => (
-                <li key={pt} className="flex gap-2">
-                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-white/50" />
-                  <span>{pt}</span>
-                </li>
-              ))}
-            </ul>
+            </article>
           </GlassPanel>
         ))}
       </div>
 
-      <h2 className="mb-4 mt-12 text-sm font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-        Shipped at work
-      </h2>
-      <div className="grid gap-6 md:grid-cols-3">
-        {workHighlights.map((w) => (
-          <GlassPanel key={w.name} className="p-6" hover>
-            <p className="font-semibold text-white">{w.name}</p>
-            <p className="mt-1 text-xs text-[var(--ink-faint)]">{w.period}</p>
-            <p className="mt-3 text-sm text-[var(--ink-dim)]">{w.point}</p>
+      <h2 className="mb-4 mt-12 text-xl font-semibold text-white">Selected work at AT&amp;T</h2>
+      <div className="grid gap-5 md:grid-cols-3">
+        {workHighlights.map((job) => (
+          <GlassPanel key={job.team} className="p-6">
+            <h3 className="font-semibold text-white">{job.team}</h3>
+            <p className="mt-1 text-sm text-[var(--ink-faint)]">{job.start} – {job.end}</p>
+            <p className="mt-3 text-[var(--ink-dim)]">{job.points[0]}</p>
           </GlassPanel>
         ))}
       </div>
