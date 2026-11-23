@@ -15,7 +15,7 @@ export function portfolioAnswer(question: string): string {
   if (/contact|email|linkedin|github|reach/.test(query)) {
     return `Email Danny at ${profile.email}. You can also find him on LinkedIn (${profile.links.linkedin}) and GitHub (${profile.links.github}).`
   }
-  if (/school|stud(y|ied)|educat|degree|college|universit|penn|stony/.test(query)) {
+  if (/school|stud(y|ied)|educat|degree|college|universit|campus|master.s|bachelor.s|graduat|penn|stony/.test(query)) {
     return education.map(({ school, degree, end }) => `${school} · ${degree} (${end})`).join('\n')
   }
   if (/stack|skill|language|technolog|framework|tool/.test(query)) {
@@ -30,7 +30,7 @@ export function portfolioAnswer(question: string): string {
   if (/project|app|built|build/.test(query)) {
     return projects.map(({ name, summary }) => `${name} · ${summary}`).join('\n\n')
   }
-  if (/hobb|interest|outside|free time/.test(query)) return hobbies.join(', ') + '.'
+  if (/hobb|interest|outside|free time|off the clock/.test(query)) return hobbies.join(', ') + '.'
   if (/who is|about danny|introduce|describe danny|where.*(live|based)/.test(query)) {
     return `${profile.name} is a ${profile.title} based in ${profile.location}. ${profile.blurb}`
   }
