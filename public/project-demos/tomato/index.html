@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive browser preview of Tomato, the iOS accountability app.">
+  <title>Tomato | Interactive preview</title>
+  <style>
+    :root{color-scheme:light;--paper:#f7f6f4;--ink:#171613;--muted:#68635d;--line:#e8e4df;--accent:#bf392e;--soft:#fce9e5;--surface:#fff}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,sans-serif;font-size:1rem;line-height:1.5}
+    button,input{font:inherit}
+    button{cursor:pointer;color:inherit}
+    :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    a{color:var(--accent);text-underline-offset:4px}
+    main{width:min(100% - 2rem,65rem);margin:0 auto}
+    .back{display:inline-block;margin-top:1.25rem;font-size:.9rem}
+    .layout{display:grid;grid-template-columns:1fr minmax(22rem,28rem);align-items:center;gap:clamp(2rem,7vw,6rem);padding:2.5rem 0 3rem}
+    .mark{width:4rem;height:4rem;display:grid;place-items:center;background:var(--soft);border-radius:1.2rem;font-size:2rem}
+    h1{font-size:clamp(3rem,8vw,5rem);line-height:1;letter-spacing:-.07em;margin:.7rem 0 1rem}
+    .intro{font-size:clamp(1.1rem,2vw,1.35rem);max-width:25rem;margin:0 0 1rem}
+    .disclosure{color:var(--muted);font-size:.925rem;max-width:25rem;margin:0}
+    .phone{background:var(--paper);border:1px solid #d9d3cd;border-radius:2rem;box-shadow:0 1.25rem 3.5rem #26211a18;overflow:hidden}
+    .screen{padding:1.5rem;min-height:31rem}
+    h2{font-size:2.2rem;letter-spacing:-.05em;line-height:1.1;margin:0 0 1rem}
+    h3{font-size:1rem;margin:0}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:.65rem;flex-wrap:wrap}
+    .meta{color:var(--muted);font-size:.875rem}
+    .switch{display:flex;gap:.2rem;padding:.2rem;background:#eeebe7;border-radius:.65rem}
+    .switch button,.nav button{border:0;background:transparent;border-radius:.45rem;font-size:.875rem;font-weight:600;min-height:2.2rem;padding:.35rem .65rem}
+    .switch button[aria-pressed=true]{background:white;box-shadow:0 1px 3px #21170b20}
+    .progress{margin:1rem 0}
+    #count{font-size:1.25rem}
+    .meter{display:flex;gap:4px;margin-top:.45rem}
+    .meter i{width:100%;height:5px;border-radius:1rem;background:#e6e1db}
+    .meter .filled{background:var(--accent)}
+    .meter[data-complete=true] .filled{background:#197947}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:1rem}
+    .tasks{padding:0;margin:0;list-style:none;overflow:hidden}
+    .tasks li+li{border-top:1px solid var(--line)}
+    .tasks label{display:flex;gap:.65rem;align-items:center;min-height:3.05rem;padding:.45rem .75rem;cursor:pointer}
+    .tasks input{width:1.2rem;height:1.2rem;accent-color:var(--accent);flex:none;margin:0}
+    .tasks input:checked+span{color:var(--muted);text-decoration:line-through}
+    .composer{display:flex;gap:.5rem;padding:.35rem .4rem .35rem .75rem;margin-top:1rem}
+    .composer input{min-width:0;flex:1;border:0;background:transparent}
+    .composer button,.reaction{border:0;border-radius:.6rem;background:var(--ink);color:white;font-size:.875rem;font-weight:600;min-height:2.4rem;padding:.4rem .65rem}
+    .feed-card{padding:.85rem 1rem;margin-top:.75rem}
+    .friend{display:flex;align-items:center;gap:.65rem}
+    .avatar{display:grid;place-items:center;flex:none;width:2.4rem;height:2.4rem;border-radius:50%;background:#e7dff5;color:#593774;font-weight:700}
+    .feed-card ul{padding-left:1.2rem}
+    .reaction{background:var(--soft);color:#84291f}
+    .reaction[aria-pressed=true]{background:var(--accent);color:white}
+    .nav{display:flex;justify-content:center;gap:.5rem;background:white;padding:.75rem;border-top:1px solid var(--line)}
+    .nav button{min-width:6rem}
+    .nav button[aria-pressed=true]{background:var(--soft);color:#84291f}
+    @media(max-width:740px){.layout{grid-template-columns:minmax(0,1fr);gap:1.4rem;padding-top:1.5rem}.phone{width:min(100%,28rem);margin:0 auto}.screen{padding:1rem;min-height:27rem}}
+    @media(max-width:350px){.screen{padding:.75rem}.row{gap:.4rem}.switch button{padding:.3rem .45rem}}
+  </style>
+</head>
+<body>
+<main>
+  <a class="back" href="/#projects">Back to projects</a>
+  <div class="layout">
+    <header>
+      <div class="mark" aria-hidden="true">🍅</div>
+      <h1>Tomato</h1>
+      <p class="intro">Make a daily list, check off what you finish, and see how your friends did.</p>
+      <p class="disclosure">Interactive browser preview of the iOS app. The people and tasks are fictional, and changes reset on reload.</p>
+    </header>
+    <section class="phone" aria-label="Tomato app preview">
+      <div class="screen">
+        <section id="today">
+          <h2>Today</h2>
+          <div class="row">
+            <span class="meta">Tuesday, May 19</span>
+            <div class="switch" role="group" aria-label="List visibility">
+              <button type="button" id="public" aria-pressed="true">Public</button>
+              <button type="button" id="private" aria-pressed="false">Private</button>
+            </div>
+          </div>
+          <div class="progress">
+            <div class="row" aria-live="polite"><strong id="count"></strong><span class="meta" id="remaining"></span></div>
+            <div class="meter" id="meter" aria-hidden="true"></div>
+          </div>
+          <ul class="card tasks" id="tasks"></ul>
+          <p class="meta" id="visibility">Friends can see a public list. Unfinished tasks appear in their feed at midnight.</p>
+          <form class="card composer" id="composer">
+            <input id="task" aria-label="New task" placeholder="Add a task" maxlength="70" required>
+            <button type="submit">Add task</button>
+          </form>
+        </section>
+        <section id="feed" hidden>
+          <h2>Feed</h2>
+          <div class="switch" role="group" aria-label="Feed view">
+            <button type="button" id="live" aria-pressed="true">Live</button>
+            <button type="button" id="past" aria-pressed="false">Past days</button>
+          </div>
+          <div id="live-feed">
+            <article class="card feed-card" id="your-card">
+              <div class="friend"><div class="avatar" aria-hidden="true">Y</div><div><h3>Your public list</h3><div class="meta" id="your-progress"></div></div></div>
+              <ul id="your-tasks"></ul>
+            </article>
+            <article class="card feed-card">
+              <div class="friend"><div class="avatar" aria-hidden="true">M</div><div><h3>Maya</h3><div class="meta">1 of 2 done</div></div></div>
+              <ul><li>✗ Practice piano</li><li>✓ Sketch a new layout</li></ul>
+            </article>
+          </div>
+          <div id="past-feed" hidden>
+            <p class="meta">Yesterday</p>
+            <article class="card feed-card">
+              <div class="friend"><div class="avatar" aria-hidden="true">J</div><div><h3>Jordan</h3><div class="meta">Public list · 2 of 3 done</div></div></div>
+              <ul><li>✓ Prep lunch</li><li>✓ Finish a chapter</li><li>✗ Fold laundry</li></ul>
+              <button type="button" class="reaction" id="throw" aria-pressed="false">🍅 Throw a tomato · 2</button>
+            </article>
+          </div>
+        </section>
+      </div>
+      <nav class="nav" aria-label="App screens">
+        <button type="button" id="show-today" aria-controls="today" aria-pressed="true">Today</button>
+        <button type="button" id="show-feed" aria-controls="feed" aria-pressed="false">Feed</button>
+      </nav>
+    </section>
+  </div>
+</main>
+<script>
+  const tasks = [
+    { name: 'Go for a walk', done: true },
+    { name: 'Send the design draft', done: true },
+    { name: 'Pick up groceries', done: false },
+    { name: 'Read a chapter', done: false },
+  ];
+  const byId = (id) => document.getElementById(id);
+  const setPressed = (id, value) => byId(id).setAttribute('aria-pressed', String(value));
+  let isPublic = true;
+
+  function renderProgress() {
+    const done = tasks.filter((task) => task.done).length;
+    const remaining = tasks.length - done;
+    byId('count').textContent = `${done} of ${tasks.length}`;
+    byId('remaining').textContent = remaining === 0 ? 'All done' : isPublic ? `${remaining} left before midnight` : 'Private today';
+    byId('meter').dataset.complete = String(remaining === 0);
+    byId('meter').replaceChildren(...tasks.map((_task, index) => {
+      const segment = document.createElement('i');
+      segment.classList.toggle('filled', index < done);
+      return segment;
+    }));
+    byId('your-card').hidden = !isPublic;
+    byId('your-progress').textContent = `${done} of ${tasks.length} done`;
+    byId('your-tasks').replaceChildren(...tasks.map((task) => {
+      const item = document.createElement('li');
+      item.textContent = `${task.done ? '✓' : '✗'} ${task.name}`;
+      return item;
+    }));
+  }
+
+  function appendTask(task) {
+    const item = document.createElement('li');
+    const label = document.createElement('label');
+    const check = document.createElement('input');
+    const text = document.createElement('span');
+    check.type = 'checkbox';
+    check.checked = task.done;
+    text.textContent = task.name;
+    check.addEventListener('change', () => {
+      task.done = check.checked;
+      renderProgress();
+    });
+    label.append(check, text);
+    item.append(label);
+    byId('tasks').append(item);
+  }
+
+  function setVisibility(value) {
+    isPublic = value;
+    setPressed('public', value);
+    setPressed('private', !value);
+    byId('visibility').textContent = value
+      ? 'Friends can see a public list. Unfinished tasks appear in their feed at midnight.'
+      : 'Only you can see this list.';
+    renderProgress();
+  }
+
+  function switchView(first, second, firstButton, secondButton, showFirst) {
+    byId(first).hidden = !showFirst;
+    byId(second).hidden = showFirst;
+    setPressed(firstButton, showFirst);
+    setPressed(secondButton, !showFirst);
+  }
+
+  tasks.forEach(appendTask);
+  renderProgress();
+  byId('composer').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const input = byId('task');
+    const name = input.value.trim();
+    if (!name) return;
+    const task = { name, done: false };
+    tasks.push(task);
+    appendTask(task);
+    renderProgress();
+    input.value = '';
+    input.focus();
+  });
+  byId('public').addEventListener('click', () => setVisibility(true));
+  byId('private').addEventListener('click', () => setVisibility(false));
+  byId('show-today').addEventListener('click', () => switchView('today', 'feed', 'show-today', 'show-feed', true));
+  byId('show-feed').addEventListener('click', () => switchView('today', 'feed', 'show-today', 'show-feed', false));
+  byId('live').addEventListener('click', () => switchView('live-feed', 'past-feed', 'live', 'past', true));
+  byId('past').addEventListener('click', () => switchView('live-feed', 'past-feed', 'live', 'past', false));
+  byId('throw').addEventListener('click', () => {
+    const reaction = byId('throw');
+    const selected = reaction.getAttribute('aria-pressed') === 'true';
+    setPressed('throw', !selected);
+    reaction.textContent = selected ? '🍅 Throw a tomato · 2' : '🍅 Tomato thrown · 3';
+  });
+</script>
+</body>
+</html>

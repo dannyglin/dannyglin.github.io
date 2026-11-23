@@ -199,6 +199,15 @@ export type Project = {
   stack: string[]
   points: string[]
   links?: { label: string; href: string }[]
+  demo?: {
+    image: string
+    alt: string
+    width: number
+    height: number
+    caption: string
+    href: string
+    label: string
+  }
 }
 
 export const projects: Project[] = [
@@ -215,6 +224,15 @@ export const projects: Project[] = [
       { label: 'Open Pocket Randomizer', href: 'https://pocket-randomizer.pages.dev/' },
       { label: 'Source on GitHub', href: 'https://github.com/dannyglin/pokemon-rom-randomizer' },
     ],
+    demo: {
+      image: '/project-demos/pocket-settings.png',
+      alt: 'Pocket Randomizer with the Trainer battles settings expanded, including the evolution level control.',
+      width: 1440,
+      height: 1080,
+      caption: 'Live app capture showing trainer battle settings.',
+      href: '/project-demos/pocket-overview.png',
+      label: 'See the game selection screen',
+    },
   },
   {
     name: 'Stilltide',
@@ -225,6 +243,15 @@ export const projects: Project[] = [
       'Renders wallpapers per display and keeps the previous wallpaper visible until the next video frame is ready.',
       'Uses system audio to drive a 12-band spectrum and independent stereo effects.',
     ],
+    demo: {
+      image: '/project-demos/stilltide-playlist.jpg',
+      alt: 'Stilltide’s native wallpaper library with three sample photos and playback controls.',
+      width: 1250,
+      height: 783,
+      caption: 'Native SwiftUI views rendered with sample wallpapers.',
+      href: '/project-demos/stilltide-effects.jpg',
+      label: 'See the effects controls',
+    },
   },
   {
     name: 'Tomato',
@@ -235,6 +262,15 @@ export const projects: Project[] = [
       'Reached 20 private beta users with daily prompts and a friends feed.',
       'Built friend requests, comments, reactions, and per-post visibility in Supabase so users could control what they shared.',
     ],
+    demo: {
+      image: '/project-demos/tomato-preview.png',
+      alt: 'Tomato browser preview with a sample daily checklist, completion progress, and public and private visibility controls.',
+      width: 1200,
+      height: 800,
+      caption: 'Interactive browser preview with fictional tasks and friends.',
+      href: '/project-demos/tomato/index.html',
+      label: 'Try the Tomato preview',
+    },
   },
 ]
 
