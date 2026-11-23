@@ -287,7 +287,7 @@ export const skills: { group: string; items: string[] }[] = [
 
 export type Photo = {
   title: string
-  location: string
+  location?: string
   /** File in /public/photos, shown cropped (aspect-[4/5]) in the grid and
    * uncropped in the click-to-expand lightbox. */
   src: string
@@ -300,6 +300,11 @@ export type Photo = {
 // the oldest photo naturally drifts rightward as new ones are added ahead of
 // it, wrapping to the start of a new row once the current one fills up.
 export const photos: Photo[] = [
+  {
+    title: 'BMWs After Dark',
+    src: '/photos/bmws-after-dark.jpg',
+    swatch: 'linear-gradient(135deg, #101318, #29323f)',
+  },
   {
     title: 'Fjord Valley',
     location: 'Tromso, Norway',

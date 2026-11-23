@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import GlassPanel from '../components/GlassPanel'
 import SectionShell from '../components/SectionShell'
-import { photos } from '../lib/resume'
+import { photos, type Photo } from '../lib/resume'
 
 /** Full-size view of a grid photo - the grid crops to aspect-[4/5], this shows
  * the uncropped original. Closes on Escape, backdrop click, or the close button. */
@@ -10,7 +10,7 @@ function Lightbox({
   photo,
   onClose,
 }: {
-  photo: { title: string; location: string; src: string }
+  photo: Photo
   onClose: () => void
 }) {
   useEffect(() => {
@@ -36,7 +36,7 @@ function Lightbox({
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 sm:p-8"
       role="dialog"
       aria-modal="true"
-      aria-label={`${photo.title} - ${photo.location}`}
+      aria-label={photo.title}
       onClick={onClose}
     >
       <button
@@ -53,13 +53,12 @@ function Lightbox({
       >
         <img
           src={photo.src}
-          alt={`${photo.title} - ${photo.location}`}
+          alt={photo.location ? `${photo.title} - ${photo.location}` : photo.title}
           className="max-h-[80vh] max-w-full rounded-lg object-contain shadow-2xl"
         />
         <figcaption className="text-center text-sm text-[var(--ink-dim)]">
           <span className="font-semibold text-white">{photo.title}</span>
-          {' - '}
-          {photo.location}
+          {photo.location && ` - ${photo.location}`}
         </figcaption>
       </figure>
     </div>,
@@ -73,7 +72,7 @@ export default function Photography() {
   return (
     <SectionShell eyebrow="Photography" title="Through the lens">
       <p className="mb-8 max-w-2xl text-[var(--ink-dim)]">
-        Frames from places I&apos;ve traveled. Click any photo for the full,
+        Click any photo for the full,
         uncropped shot.
       </p>
 
@@ -91,13 +90,13 @@ export default function Photography() {
             >
               <img
                 src={photo.src}
-                alt={`${photo.title} - ${photo.location}`}
+                alt={photo.location ? `${photo.title} - ${photo.location}` : photo.title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             </div>
             <div className="p-4">
               <p className="font-semibold text-white">{photo.title}</p>
-              <p className="text-sm text-[var(--ink-faint)]">{photo.location}</p>
+              {photo.location && <p className="text-sm text-[var(--ink-faint)]">{photo.location}</p>}
             </div>
           </GlassPanel>
         ))}
