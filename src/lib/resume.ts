@@ -225,7 +225,7 @@ export const projects: Project[] = [
     demo: {
       video: '/project-demos/pocket-demo.mp4',
       poster: '/project-demos/pocket-settings.png',
-      caption: 'Live app walkthrough of trainer and wild encounter settings.',
+      caption: 'Live app walkthrough of game selection and trainer battle settings.',
       href: '/project-demos/pocket-overview.png',
       label: 'See the game selection screen',
     },

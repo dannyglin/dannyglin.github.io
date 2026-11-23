@@ -85,9 +85,10 @@ export default function ChatWidget() {
 
     const userMsg: Msg = { id: uid(), role: 'user', content: text }
     const botId = uid()
-    const engine = engineRef.current
+    const answer = portfolioAnswer(text)
+    const engine = answer === NO_PORTFOLIO_ANSWER ? engineRef.current : null
     setMessages((m) => [...m, userMsg, {
-      id: botId, role: 'assistant', content: engine ? '' : portfolioAnswer(text),
+      id: botId, role: 'assistant', content: engine ? '' : answer,
     }])
     setInput('')
     if (inputRef.current) inputRef.current.style.height = 'auto'
@@ -109,10 +110,9 @@ export default function ChatWidget() {
       engineRef.current = null
       setStatus('error')
     } finally {
-      const answer = portfolioAnswer(text)
       const topic = /^([1-9])(?:[.\s]|$)/.exec(classification.trim())?.[1]
       const match = topic ? PORTFOLIO_TOPICS[Number(topic) - 1] : undefined
-      const reply = answer === NO_PORTFOLIO_ANSWER && match ? portfolioAnswer(match) : answer
+      const reply = match ? portfolioAnswer(match) : answer
       setMessages((current) => stopRef.current
         ? current.filter((message) => message.id !== botId)
         : current.map((message) => message.id === botId ? { ...message, content: reply } : message),

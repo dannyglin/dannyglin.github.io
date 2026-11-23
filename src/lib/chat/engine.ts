@@ -64,6 +64,7 @@ export async function* streamReply(
     stream: true,
     temperature: 0,
     max_tokens: 4,
+    response_format: { type: 'grammar', grammar: 'root ::= [0-9]' },
   })
   for await (const chunk of stream) {
     if (shouldStop()) {
