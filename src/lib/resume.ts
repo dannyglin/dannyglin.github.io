@@ -301,7 +301,8 @@ export type Photo = {
 // it, wrapping to the start of a new row once the current one fills up.
 export const photos: Photo[] = [
   {
-    title: 'BMWs After Dark',
+    title: 'BMWs in Industry City',
+    location: 'Brooklyn, New York, USA',
     src: '/photos/bmws-after-dark.jpg',
     swatch: 'linear-gradient(135deg, #101318, #29323f)',
   },
