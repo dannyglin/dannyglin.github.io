@@ -38,17 +38,15 @@ export default function Projects() {
               </div>
               {project.demo && (
                 <figure className={index === 0 ? undefined : 'mt-6'}>
-                  <a href={project.demo.image} aria-label={`View full-size ${project.name} preview`}>
-                    <img
-                      className="w-full rounded-xl border border-white/20"
-                      src={project.demo.image}
-                      alt={project.demo.alt}
-                      width={project.demo.width}
-                      height={project.demo.height}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </a>
+                  <video
+                    className="aspect-[8/5] w-full rounded-xl border border-white/20 bg-black object-contain"
+                    src={project.demo.video}
+                    poster={project.demo.poster}
+                    aria-label={`${project.name} video demo`}
+                    controls
+                    playsInline
+                    preload="none"
+                  />
                   <figcaption className="mt-3 text-sm text-[var(--ink-dim)]">
                     <p>{project.demo.caption}</p>
                     <a href={project.demo.href} className="mt-2 inline-block font-medium text-white underline underline-offset-4">

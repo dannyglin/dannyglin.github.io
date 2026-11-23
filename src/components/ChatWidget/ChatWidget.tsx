@@ -4,11 +4,13 @@ import {
   CHAT_MODEL_DOWNLOAD,
   isWebGPUAvailable,
   loadEngine,
+  MAX_QUESTION_LENGTH,
   resetEngineChat,
   streamReply,
   type ChatTurn,
 } from '../../lib/chat/engine'
-import { EXAMPLE_PROMPTS, SYSTEM_PROMPT } from '../../lib/chat/systemPrompt'
+import { NO_PORTFOLIO_ANSWER, portfolioAnswer } from '../../lib/chat/portfolioAnswer'
+import { EXAMPLE_PROMPTS, PORTFOLIO_TOPICS, SYSTEM_PROMPT } from '../../lib/chat/systemPrompt'
 
 type Status = 'unsupported' | 'idle' | 'loading' | 'ready' | 'error'
 type Msg = { id: string; role: 'user' | 'assistant'; content: string }
@@ -23,11 +25,10 @@ export default function ChatWidget() {
   const [status, setStatus] = useState<Status>(() =>
     isWebGPUAvailable() ? 'idle' : 'unsupported',
   )
-  const [progress, setProgress] = useState({ pct: 0, text: '' })
+  const [progress, setProgress] = useState(0)
   const [messages, setMessages] = useState<Msg[]>([])
   const [input, setInput] = useState('')
   const [generating, setGenerating] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const engineRef = useRef<MLCEngine | null>(null)
   const stopRef = useRef(false)
@@ -35,16 +36,8 @@ export default function ChatWidget() {
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    if (open && status === 'ready') inputRef.current?.focus()
-  }, [open, status])
-
-  // Start pulling the model the first time the panel is opened - no button.
-  // (Not on mount: don't cost every visitor the model download if they never
-  // open it.)
-  useEffect(() => {
-    if (open && status === 'idle') handleLoad()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, status])
+    if (open) inputRef.current?.focus()
+  }, [open])
 
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ block: 'end' })
@@ -75,66 +68,61 @@ export default function ChatWidget() {
 
   async function handleLoad() {
     setStatus('loading')
-    setError(null)
+    setProgress(0)
     try {
       engineRef.current = await loadEngine((r) =>
-        setProgress({ pct: Math.round(r.progress * 100), text: r.text }),
+        setProgress(Math.round(r.progress * 100)),
       )
       setStatus('ready')
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+    } catch {
       setStatus('error')
     }
   }
 
   async function handleSend() {
     const text = input.trim()
-    if (!text || generating || !engineRef.current) return
+    if (!text || generating) return
 
     const userMsg: Msg = { id: uid(), role: 'user', content: text }
     const botId = uid()
-    setMessages((m) => [...m, userMsg, { id: botId, role: 'assistant', content: '' }])
+    const engine = engineRef.current
+    setMessages((m) => [...m, userMsg, {
+      id: botId, role: 'assistant', content: engine ? '' : portfolioAnswer(text),
+    }])
     setInput('')
     if (inputRef.current) inputRef.current.style.height = 'auto'
+    if (!engine) return
     setGenerating(true)
     stopRef.current = false
 
-    const history: ChatTurn[] = [...messages, userMsg]
-      .slice(-6)
-      .map((m) => ({ role: m.role, content: m.content }))
     const turns: ChatTurn[] = [
       { role: 'system', content: SYSTEM_PROMPT },
-      ...history,
+      { role: 'user', content: text },
     ]
 
+    let classification = ''
     try {
-      for await (const delta of streamReply(
-        engineRef.current,
-        turns,
-        () => stopRef.current,
-      )) {
-        setMessages((m) =>
-          m.map((msg) =>
-            msg.id === botId ? { ...msg, content: msg.content + delta } : msg,
-          ),
-        )
+      for await (const delta of streamReply(engine, turns, () => stopRef.current)) {
+        classification += delta
       }
     } catch {
-      setMessages((m) =>
-        m.map((msg) =>
-          msg.id === botId
-            ? { ...msg, content: `${msg.content}\n\n[generation error]` }
-            : msg,
-        ),
-      )
+      engineRef.current = null
+      setStatus('error')
     } finally {
+      const answer = portfolioAnswer(text)
+      const topic = /^([1-9])(?:[.\s]|$)/.exec(classification.trim())?.[1]
+      const match = topic ? PORTFOLIO_TOPICS[Number(topic) - 1] : undefined
+      const reply = answer === NO_PORTFOLIO_ANSWER && match ? portfolioAnswer(match) : answer
+      setMessages((current) => stopRef.current
+        ? current.filter((message) => message.id !== botId)
+        : current.map((message) => message.id === botId ? { ...message, content: reply } : message),
+      )
       setGenerating(false)
     }
   }
 
   function handleReset() {
     setMessages([])
-    setError(null)
     resetEngineChat().catch(() => {})
   }
 
@@ -186,11 +174,7 @@ export default function ChatWidget() {
           role="dialog"
           aria-modal="true"
           aria-label="Ask about Danny"
-          className={`fixed inset-x-2 bottom-2 z-40 flex flex-col sm:inset-x-auto sm:bottom-6 sm:left-1/2 sm:w-[min(400px,calc(100vw-1.5rem))] sm:-translate-x-1/2 ${
-            status === 'ready'
-              ? 'h-[min(75dvh,560px)] sm:h-[min(70dvh,560px)]'
-              : 'max-h-[min(75dvh,560px)] sm:max-h-[min(70dvh,560px)]'
-          }`}
+          className="fixed inset-x-2 bottom-2 z-40 flex h-[min(75dvh,560px)] flex-col sm:inset-x-auto sm:bottom-6 sm:left-1/2 sm:h-[min(70dvh,560px)] sm:w-[min(400px,calc(100vw-1.5rem))] sm:-translate-x-1/2"
         >
           <div className="glass glass-frost glass-panel-warp flex h-full flex-col overflow-hidden rounded-[28px]">
             {/* header */}
@@ -200,7 +184,7 @@ export default function ChatWidget() {
                 <span>Ask about Danny</span>
               </div>
               <div className="flex items-center gap-1">
-                {status === 'ready' && messages.length > 0 && (
+                {messages.length > 0 && !generating && (
                   <IconButton label="Clear chat" onClick={handleReset}>
                     <ResetIcon />
                   </IconButton>
@@ -213,135 +197,103 @@ export default function ChatWidget() {
 
             {/* body */}
             <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 text-sm text-[var(--ink-dim)] [scrollbar-width:thin]">
-              {status === 'unsupported' && (
-                <p className="leading-relaxed">
-                  This assistant runs entirely in your browser and needs a WebGPU
-                  browser, like desktop Chrome or Edge. It is not available here.
-                </p>
-              )}
-
-              {(status === 'idle' || status === 'loading') && (
-                <div className="space-y-3 leading-relaxed">
-                  <p>
-                    Setting up a small language model that runs entirely in your
-                    browser, on your GPU. Nothing you type is sent to a server.
-                  </p>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                    <div
-                      className="h-full rounded-full bg-white/70 motion-safe:transition-[width] motion-safe:duration-300"
-                      style={{ width: `${progress.pct}%` }}
-                    />
+              <div className="space-y-3">
+                {messages.length === 0 && (
+                  <div className="space-y-2">
+                    <p className="text-[var(--ink-faint)]">
+                      Ask about Danny's work, projects, or background.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {EXAMPLE_PROMPTS.map((p) => (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => {
+                            setInput(p)
+                            inputRef.current?.focus()
+                          }}
+                          className="chip"
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-xs text-[var(--ink-faint)]">
-                    {progress.text ||
-                      `Downloading model files (${CHAT_MODEL_DOWNLOAD}, one time - cached after this).`}
-                  </p>
-                </div>
-              )}
-
-              {status === 'error' && (
-                <div className="space-y-3">
-                  <p className="text-rose-300">{error}</p>
-                  <button
-                    type="button"
-                    onClick={handleLoad}
-                    className="glass glass-frost glass-hover rounded-full px-5 py-2.5 text-sm font-semibold text-white"
+                )}
+                {messages.map((m) => (
+                  <div
+                    key={m.id}
+                    className={
+                      m.role === 'user'
+                        ? 'ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-white/12 px-3 py-2 text-white'
+                        : 'mr-auto max-w-[90%] whitespace-pre-wrap'
+                    }
                   >
-                    Try again
-                  </button>
-                </div>
-              )}
-
-              {status === 'ready' && (
-                <div className="space-y-3">
-                  {messages.length === 0 && (
-                    <div className="space-y-2">
-                      <p className="text-[var(--ink-faint)]">
-                        Ask about Danny's work, projects, or background.
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {EXAMPLE_PROMPTS.map((p) => (
-                          <button
-                            key={p}
-                            type="button"
-                            onClick={() => {
-                              setInput(p)
-                              inputRef.current?.focus()
-                            }}
-                            className="chip"
-                          >
-                            {p}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {messages.map((m) => (
-                    <div
-                      key={m.id}
-                      className={
-                        m.role === 'user'
-                          ? 'ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-white/12 px-3 py-2 text-white'
-                          : 'mr-auto max-w-[90%] whitespace-pre-wrap'
-                      }
-                    >
-                      {m.content}
-                      {m.role === 'assistant' &&
-                        generating &&
-                        m.id === messages[messages.length - 1]?.id && (
-                          <span className="ml-0.5 inline-block motion-safe:animate-pulse">
-                            |
-                          </span>
-                        )}
-                    </div>
-                  ))}
-                  <div ref={listEndRef} />
-                </div>
-              )}
+                    {m.content}
+                    {m.role === 'assistant' &&
+                      generating &&
+                      m.id === messages[messages.length - 1]?.id && (
+                        <span className="ml-0.5 inline-block motion-safe:animate-pulse">
+                          |
+                        </span>
+                      )}
+                  </div>
+                ))}
+                <div ref={listEndRef} />
+              </div>
             </div>
 
             {/* composer */}
-            {status === 'ready' && (
-              <div className="border-t border-white/10 px-3 py-3">
-                <div className="glass glass-input flex items-end gap-2 rounded-2xl px-3 py-2">
-                  <textarea
-                    ref={inputRef}
-                    rows={1}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onInput={autoGrow}
-                    onKeyDown={onComposerKey}
-                    placeholder="Ask a question"
-                    className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent text-sm text-white outline-none placeholder:text-[var(--ink-faint)]"
-                  />
-                  {generating ? (
-                    <button
-                      type="button"
-                      aria-label="Stop"
-                      onClick={() => {
-                        stopRef.current = true
-                      }}
-                      className="glass-control shrink-0 rounded-full p-1.5 text-white"
-                    >
-                      <StopIcon />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      aria-label="Send"
-                      onClick={handleSend}
-                      disabled={!input.trim()}
-                      className="glass-control shrink-0 rounded-full p-1.5 text-white"
-                    >
-                      <SendIcon />
-                    </button>
-                  )}
-                </div>
-                <p className="mt-2 text-center text-[11px] text-[var(--ink-faint)]">
-                  Runs a small model in your browser. It can be wrong.
-                </p>
+            <div className="border-t border-white/10 px-3 py-3">
+              <div className="glass glass-input flex items-end gap-2 rounded-2xl px-3 py-2">
+                <textarea
+                  ref={inputRef}
+                  rows={1}
+                  maxLength={MAX_QUESTION_LENGTH}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onInput={autoGrow}
+                  onKeyDown={onComposerKey}
+                  placeholder="Ask a question"
+                  className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent text-sm text-white outline-none placeholder:text-[var(--ink-faint)]"
+                />
+                {generating ? (
+                  <button
+                    type="button"
+                    aria-label="Stop"
+                    onClick={() => {
+                      stopRef.current = true
+                    }}
+                    className="glass-control shrink-0 rounded-full p-1.5 text-white"
+                  >
+                    <StopIcon />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    aria-label="Send"
+                    onClick={handleSend}
+                    disabled={!input.trim()}
+                    className="glass-control shrink-0 rounded-full p-1.5 text-white"
+                  >
+                    <SendIcon />
+                  </button>
+                )}
               </div>
-            )}
+              <div className="mt-2 text-center text-xs text-[var(--ink-faint)]" role="status">
+                {status === 'ready' && 'On-device AI is active. Answers use portfolio facts.'}
+                {status === 'unsupported' && 'Answers come from Danny’s portfolio.'}
+                {status === 'loading' && `Loading on-device AI (${progress}%). Portfolio answers are available now.`}
+                {(status === 'idle' || status === 'error') && (
+                  <>
+                    <span>{status === 'error' ? 'On-device AI unavailable. Using portfolio answers. ' : 'Using portfolio answers. '}</span>
+                    <button type="button" className="underline underline-offset-2" onClick={handleLoad}>
+                      {status === 'error' ? 'Retry on-device AI' : `Enable on-device AI (${CHAT_MODEL_DOWNLOAD})`}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
